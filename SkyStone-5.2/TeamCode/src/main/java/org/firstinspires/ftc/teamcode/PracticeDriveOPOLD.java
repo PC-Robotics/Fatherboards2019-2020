@@ -5,17 +5,17 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;  
-import com.qualcomm.robotcore.hardware.Gamepad;  
-import com.qualcomm.robotcore.hardware.DcMotor; 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 @TeleOp
 
-public class PracticeDriveOP extends LinearOpMode{
+public class PracticeDriveOPOLD extends LinearOpMode{
 
     private float stickSensitivity = 0.13f; //> than this gets registered as input
 
-    private DcMotor frontRight;  
+    private DcMotor frontRight;
     public DcMotor leftMotor;
     public DcMotor leftMotor2;
     public DcMotor rightMotor;
@@ -29,7 +29,7 @@ public class PracticeDriveOP extends LinearOpMode{
     public Servo intakePivotServo;
     public float intakePivotServoPos = 0.5f; //What the servo above's current pos is; Sets to this at start
     public float intakePivotSensitivity = 100;
-    
+
     public DcMotor liftPivotMotor;
     public float liftPivotServoPos = 0; //What the motor above's current pos is; Sets to this at start
     public float liftPivotSensitivity = 0.5f;
@@ -40,9 +40,10 @@ public class PracticeDriveOP extends LinearOpMode{
     public CRServo intakeServo1;
     public CRServo intakeServo2;
     @Override
-    public void runOpMode()   
+    public void runOpMode()
     {
-        //connects motors to hub & phone- use name in quotes for config  
+
+        //connects motors to hub & phone- use name in quotes for config
         leftMotor = hardwareMap.get(DcMotor.class, "left_Motor");
         leftMotor2 = hardwareMap.get(DcMotor.class, "left_Motor2");
 
@@ -88,22 +89,22 @@ public class PracticeDriveOP extends LinearOpMode{
             //pivotLift();
             //toggleIntake();
             //toggleDrawerSlides();
-              telemetry.addData("motorPower", motorPower);
+            telemetry.addData("motorPower", motorPower);
             //telemetry.addData("drawerMotor", drawerMotor.getCurrentPosition());
         }//opModeIsActive
-      
-    }//runOpMode 
+
+    }//runOpMode
 
     public void drive()
     {
         //deadzone. If result of setPower() is small. Telemetry was giving values for setPower so idk xy cords.
         if(Math.abs(gamepad1.left_stick_x) > 0.2 || (Math.abs(gamepad1.left_stick_y) > 0.2 ))
         {
-            leftMotor.setPower(-(gamepad1.left_stick_x + gamepad1.left_stick_y) * motorPower);
-            leftMotor2.setPower(-(gamepad1.left_stick_x + gamepad1.left_stick_y) * motorPower);
+            leftMotor.setPower(-(gamepad1.left_stick_x + -gamepad1.left_stick_y) * motorPower);
+            leftMotor2.setPower(-(gamepad1.left_stick_x + -gamepad1.left_stick_y) * motorPower);
 
-            rightMotor.setPower(-(-gamepad1.left_stick_x + gamepad1.left_stick_y) * motorPower);
-            rightMotor2.setPower(-(-gamepad1.left_stick_x + gamepad1.left_stick_y) * motorPower);
+            rightMotor.setPower(-(gamepad1.left_stick_x + gamepad1.left_stick_y) * motorPower);
+            rightMotor2.setPower(-(gamepad1.left_stick_x + gamepad1.left_stick_y) * motorPower);
         }
         else
         {
@@ -135,7 +136,7 @@ public class PracticeDriveOP extends LinearOpMode{
         intakePivotServo.setPosition(intakePivotServo.getPosition() + (gamepad2.right_stick_y / intakePivotSensitivity));
         telemetry.addData("IntakePosition", intakePivotServo.getPosition());
     }
-    
+
     public void toggleIntake()
     {
         if(gamepad2.y)

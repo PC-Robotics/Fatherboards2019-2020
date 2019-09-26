@@ -1,25 +1,22 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;  
-import com.qualcomm.robotcore.hardware.Gamepad;  
-import com.qualcomm.robotcore.hardware.DcMotor; 
 
 @TeleOp
 
-public class PracticeDriveOP extends LinearOpMode{
+public class AshCode extends LinearOpMode{
 
     private float stickSensitivity = 0.13f; //> than this gets registered as input
 
     private DcMotor frontRight;  
-    public DcMotor leftMotor;
-    public DcMotor leftMotor2;
+    public DcMotor motor;
+    /*public DcMotor leftMotor2;
     public DcMotor rightMotor;
-    public DcMotor rightMotor2;
+    public DcMotor rightMotor2;*/
 
     public DcMotor drawerMotor;
     public float drawrMotorSensititivy = 0.6f;
@@ -42,12 +39,9 @@ public class PracticeDriveOP extends LinearOpMode{
     @Override
     public void runOpMode()   
     {
-        //connects motors to hub & phone- use name in quotes for config  
-        leftMotor = hardwareMap.get(DcMotor.class, "left_Motor");
-        leftMotor2 = hardwareMap.get(DcMotor.class, "left_Motor2");
 
-        rightMotor = hardwareMap.get(DcMotor.class, "right_Motor");
-        rightMotor2 = hardwareMap.get(DcMotor.class, "right_Motor2");
+        //connects motors to hub & phone- use name in quotes for config  
+        motor = hardwareMap.get(DcMotor.class, "motor");
 
         /*drawerMotor = hardwareMap.get(DcMotor.class, "drawer_Motor");
         liftPivotMotor= hardwareMap.get(DcMotor.class, "pivot_Motor");
@@ -55,24 +49,14 @@ public class PracticeDriveOP extends LinearOpMode{
         intakeServo2 = hardwareMap.get(CRServo.class, "rightVexMotor");
         intakePivotServo = hardwareMap.get(Servo.class, "intakePivotServo");*/
 
-        leftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftMotor.setDirection(DcMotor.Direction.FORWARD);
-        leftMotor2.setDirection(DcMotor.Direction.FORWARD);
-        rightMotor.setDirection(DcMotor.Direction.FORWARD);
-        rightMotor2.setDirection(DcMotor.Direction.FORWARD);
+        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         /*drawerMotor.setDirection(DcMotor.Direction.REVERSE);
         drawerMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         liftPivotMotor.setZeroPowerBehavior((DcMotor.ZeroPowerBehavior.BRAKE));*/
 
 
-        leftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        leftMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         //intakePivotServo.setPosition(intakePivotServoPos);
 
@@ -83,7 +67,7 @@ public class PracticeDriveOP extends LinearOpMode{
 
         while (opModeIsActive())
         {
-            drive();
+            motor.setPower(gamepad1.left_stick_x * motorPower);
             //pivotIntake();
             //pivotLift();
             //toggleIntake();
@@ -92,43 +76,7 @@ public class PracticeDriveOP extends LinearOpMode{
             //telemetry.addData("drawerMotor", drawerMotor.getCurrentPosition());
         }//opModeIsActive
       
-    }//runOpMode 
-
-    public void drive()
-    {
-        //deadzone. If result of setPower() is small. Telemetry was giving values for setPower so idk xy cords.
-        if(Math.abs(gamepad1.left_stick_x) > 0.2 || (Math.abs(gamepad1.left_stick_y) > 0.2 ))
-        {
-            leftMotor.setPower(-(gamepad1.left_stick_x + gamepad1.left_stick_y) * motorPower);
-            leftMotor2.setPower(-(gamepad1.left_stick_x + gamepad1.left_stick_y) * motorPower);
-
-            rightMotor.setPower(-(-gamepad1.left_stick_x + gamepad1.left_stick_y) * motorPower);
-            rightMotor2.setPower(-(-gamepad1.left_stick_x + gamepad1.left_stick_y) * motorPower);
-        }
-        else
-        {
-            leftMotor.setPower(0);
-            leftMotor2.setPower(0);
-
-            rightMotor.setPower(0);
-            rightMotor2.setPower(0);
-        }
-        telemetry.addData("Left Motor: ", leftMotor.getPower());
-        telemetry.addData("Left Motor 2: ", leftMotor2.getPower());
-
-        telemetry.addData("Right Motor: ", rightMotor.getPower());
-        telemetry.addData("Right Motor 2: ", rightMotor2.getPower());
-
-        telemetry.addData("Left Stick X: ", gamepad1.left_stick_x);
-        telemetry.addData("Left Stick Y: ", gamepad1.left_stick_y);
-
-        telemetry.update();
-
-        if(gamepad1.left_bumper)
-            motorPower = 1.0f;
-        else if(gamepad1.right_bumper)
-            motorPower = 0.6f;
-    }
+    }//runOpMode
 
     public void pivotIntake()
     {
