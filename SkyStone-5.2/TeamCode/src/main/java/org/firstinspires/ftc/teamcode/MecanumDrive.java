@@ -5,17 +5,17 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;  
+import com.qualcomm.robotcore.hardware.Gamepad;  
+import com.qualcomm.robotcore.hardware.DcMotor; 
 
 @TeleOp
 
-public class PracticeDriveOPOLD extends LinearOpMode{
+public class MecanumDrive extends LinearOpMode{
 
     private float stickSensitivity = 0.13f; //> than this gets registered as input
 
-    private DcMotor frontRight;
+    private DcMotor frontRight;  
     public DcMotor leftMotor;
     public DcMotor leftMotor2;
     public DcMotor rightMotor;
@@ -24,12 +24,12 @@ public class PracticeDriveOPOLD extends LinearOpMode{
     public DcMotor drawerMotor;
     public float drawrMotorSensititivy = 0.6f;
 
-    public float motorPower = 1.0f;
+    public float motorPower = 1.2f;
 
     public Servo intakePivotServo;
     public float intakePivotServoPos = 0.5f; //What the servo above's current pos is; Sets to this at start
     public float intakePivotSensitivity = 100;
-
+    
     public DcMotor liftPivotMotor;
     public float liftPivotServoPos = 0; //What the motor above's current pos is; Sets to this at start
     public float liftPivotSensitivity = 0.5f;
@@ -40,10 +40,9 @@ public class PracticeDriveOPOLD extends LinearOpMode{
     public CRServo intakeServo1;
     public CRServo intakeServo2;
     @Override
-    public void runOpMode()
+    public void runOpMode()   
     {
-
-        //connects motors to hub & phone- use name in quotes for config
+        //connects motors to hub & phone- use name in quotes for config  
         leftMotor = hardwareMap.get(DcMotor.class, "left_Motor");
         leftMotor2 = hardwareMap.get(DcMotor.class, "left_Motor2");
 
@@ -89,23 +88,35 @@ public class PracticeDriveOPOLD extends LinearOpMode{
             //pivotLift();
             //toggleIntake();
             //toggleDrawerSlides();
-            telemetry.addData("motorPower", motorPower);
+              telemetry.addData("motorPower", motorPower);
             //telemetry.addData("drawerMotor", drawerMotor.getCurrentPosition());
         }//opModeIsActive
-
-    }//runOpMode
+      
+    }//runOpMode 
 
     public void drive()
     {
         //deadzone. If result of setPower() is small. Telemetry was giving values for setPower so idk xy cords.
-        if(Math.abs(gamepad1.left_stick_x) > 0.2 || (Math.abs(gamepad1.left_stick_y) > 0.2 ))
-        {
-            leftMotor.setPower(-(gamepad1.left_stick_x + -gamepad1.left_stick_y) * motorPower);
-            leftMotor2.setPower(-(gamepad1.left_stick_x + -gamepad1.left_stick_y) * motorPower);
+        /*if(Math.abs(gamepad1.left_stick_x) > 0.2 || (Math.abs(gamepad1.left_stick_y) > 0.2 ))
+        { DEADZONE IF STATEMENT IS BREAKING MEANUM CODE!*/
+            /*leftMotor.setPower(-(gamepad1.left_stick_x + gamepad1.left_stick_y) * motorPower);
+            leftMotor2.setPower(-(gamepad1.left_stick_x + gamepad1.left_stick_y) * motorPower);
 
-            rightMotor.setPower(-(gamepad1.left_stick_x + gamepad1.left_stick_y) * motorPower);
-            rightMotor2.setPower(-(gamepad1.left_stick_x + gamepad1.left_stick_y) * motorPower);
-        }
+            rightMotor.setPower(-(-gamepad1.left_stick_x + gamepad1.left_stick_y) * motorPower);
+            rightMotor2.setPower(-(-gamepad1.left_stick_x + gamepad1.left_stick_y) * motorPower);*/
+            double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
+            double robotAngle = Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
+            double rightX = -gamepad1.right_stick_x;
+            final double v1 = r * Math.cos(robotAngle) + rightX * motorPower;
+            final double v2 = r * Math.sin(robotAngle) - rightX * motorPower;
+            final double v3 = r * Math.sin(robotAngle) + rightX * motorPower;
+            final double v4 = r * Math.cos(robotAngle) - rightX * motorPower;
+
+            leftMotor.setPower(v1);
+            rightMotor.setPower(v2);
+            leftMotor2.setPower(v3);
+            rightMotor2.setPower(v4);
+        /*}
         else
         {
             leftMotor.setPower(0);
@@ -113,7 +124,7 @@ public class PracticeDriveOPOLD extends LinearOpMode{
 
             rightMotor.setPower(0);
             rightMotor2.setPower(0);
-        }
+        }*/
         telemetry.addData("Left Motor: ", leftMotor.getPower());
         telemetry.addData("Left Motor 2: ", leftMotor2.getPower());
 
@@ -126,7 +137,7 @@ public class PracticeDriveOPOLD extends LinearOpMode{
         telemetry.update();
 
         if(gamepad1.left_bumper)
-            motorPower = 1.0f;
+            motorPower = 1.2f;
         else if(gamepad1.right_bumper)
             motorPower = 0.6f;
     }
@@ -136,7 +147,7 @@ public class PracticeDriveOPOLD extends LinearOpMode{
         intakePivotServo.setPosition(intakePivotServo.getPosition() + (gamepad2.right_stick_y / intakePivotSensitivity));
         telemetry.addData("IntakePosition", intakePivotServo.getPosition());
     }
-
+    
     public void toggleIntake()
     {
         if(gamepad2.y)
