@@ -15,7 +15,8 @@ public class MecanumDrive extends LinearOpMode{
 
     private float stickSensitivity = 0.13f; //> than this gets registered as input
 
-    private DcMotor frontRight;  
+    private DcMotor frontRight;
+    // Gabe told me to do this. Help.
     public DcMotor leftMotor;
     public DcMotor leftMotor2;
     public DcMotor rightMotor;
