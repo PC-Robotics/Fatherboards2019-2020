@@ -40,6 +40,7 @@ public class MecanumDrive extends LinearOpMode{
     public boolean isIntakeActive;
     public CRServo intakeServo1;
     public CRServo intakeServo2;
+
     @Override
     public void runOpMode()   
     {
@@ -92,19 +93,18 @@ public class MecanumDrive extends LinearOpMode{
               telemetry.addData("motorPower", motorPower);
             //telemetry.addData("drawerMotor", drawerMotor.getCurrentPosition());
         }//opModeIsActive
-      
+
     }//runOpMode 
 
     public void drive()
     {
-        //deadzone. If result of setPower() is small. Telemetry was giving values for setPower so idk xy cords.
-        /*if(Math.abs(gamepad1.left_stick_x) > 0.2 || (Math.abs(gamepad1.left_stick_y) > 0.2 ))
-        { DEADZONE IF STATEMENT IS BREAKING MEANUM CODE!*/
-            /*leftMotor.setPower(-(gamepad1.left_stick_x + gamepad1.left_stick_y) * motorPower);
-            leftMotor2.setPower(-(gamepad1.left_stick_x + gamepad1.left_stick_y) * motorPower);
-
-            rightMotor.setPower(-(-gamepad1.left_stick_x + gamepad1.left_stick_y) * motorPower);
-            rightMotor2.setPower(-(-gamepad1.left_stick_x + gamepad1.left_stick_y) * motorPower);*/
+        /*
+        deadzone. If result of setPower() is small. Telemetry was giving values for setPower so idk xy cords.
+        Note: we forgot to include the rightstick in the if statement so
+        the robot wasn't accounting for it at all (lol)
+         */
+        if((Math.abs(gamepad1.left_stick_x) > 0.2 || (Math.abs(gamepad1.left_stick_y) > 0.2 )) || (Math.abs(gamepad1.right_stick_x) > 0.2 || (Math.abs(gamepad1.right_stick_y) > 0.2 )))
+        {
             double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
             double robotAngle = Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
             double rightX = -gamepad1.right_stick_x;
@@ -117,7 +117,7 @@ public class MecanumDrive extends LinearOpMode{
             rightMotor.setPower(v2);
             leftMotor2.setPower(v3);
             rightMotor2.setPower(v4);
-        /*}
+        }
         else
         {
             leftMotor.setPower(0);
@@ -125,7 +125,8 @@ public class MecanumDrive extends LinearOpMode{
 
             rightMotor.setPower(0);
             rightMotor2.setPower(0);
-        }*/
+        }
+
         telemetry.addData("Left Motor: ", leftMotor.getPower());
         telemetry.addData("Left Motor 2: ", leftMotor2.getPower());
 
