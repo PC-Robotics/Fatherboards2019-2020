@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -57,9 +58,9 @@ import java.util.List;import java.util.concurrent.TimeUnit;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-@TeleOp(name = "Concept: TensorFlow Object Detection", group = "Concept")
-
-public class ConceptTensorFlowObjectDetection extends LinearOpMode {
+@Autonomous(name = "Concept: TensorFlow Object Detection", group = "Concept")
+@Disabled //(disabled because there are conflicting liscense keys)
+public class TensorFlowObjectDetection extends LinearOpMode {
     private static final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
     private static final String LABEL_GOLD_MINERAL = "Gold Mineral";
     private static final String LABEL_SILVER_MINERAL = "Silver Mineral";
@@ -98,18 +99,21 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
      * Once you've obtained a license key, copy the string from the Vuforia web site
      * and paste it in to your code on the next line, between the double quotes.
      */
-    private static final String VUFORIA_KEY = "AXo7S/T/////AAABmfQ1Ruy8aUSnrazaVTguLQBMhNDcLFK6p2fkO8m1aV2Sllk5XJG1UFFoebwzey6RjEvctuLAk3GuHUV5EQLRioIuP19EaUlqOsKXXUItmHc8GgYj5kLR9WbF4Bo1PmM3mQSA5S2SvamOwb14/mgdYk8y5u/R/Et1ZqQKT58ROE+x4USEHhWnMZLYNc6HD+J6adHgtVUBzc6L4Wjou32+Wh9Sv7gC8OHMpvdW2VIDe1mHaXHbYcXlPEOw6MlslGoxgpWNO8xzSt9AD7+sSF1hkF01vjSZBvAS7lNlsodLUvIvphU0onA2GR2S58drC+Hevo98jpYpn8jjKK4gAos5f6LeymhZQk+8esduHtxK3sz3\n";
+
+    //reference vuforia Key
+    private static final String VUFORIA_KEY = " "; //"AXo7S/T/////AAABmfQ1Ruy8aUSnrazaVTguLQBMhNDcLFK6p2fkO8m1aV2Sllk5XJG1UFFoebwzey6RjEvctuLAk3GuHUV5EQLRioIuP19EaUlqOsKXXUItmHc8GgYj5kLR9WbF4Bo1PmM3mQSA5S2SvamOwb14/mgdYk8y5u/R/Et1ZqQKT58ROE+x4USEHhWnMZLYNc6HD+J6adHgtVUBzc6L4Wjou32+Wh9Sv7gC8OHMpvdW2VIDe1mHaXHbYcXlPEOw6MlslGoxgpWNO8xzSt9AD7+sSF1hkF01vjSZBvAS7lNlsodLUvIvphU0onA2GR2S58drC+Hevo98jpYpn8jjKK4gAos5f6LeymhZQk+8esduHtxK3sz3\n";
 
     /**
      * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
      * localization engine.
      */
+
     private VuforiaLocalizer vuforia;
 
     /**
      * {@link #tfod} is the variable we will use to store our instance of the Tensor Flow Object
      * Detection engine.
-     */
+     **/
     private TFObjectDetector tfod;
 
     @Override
@@ -147,7 +151,6 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
         /** Wait for the game to begin */
         telemetry.addData(">", "Press Play to start tracking");
         telemetry.update();
-
         waitForStart();
 
         leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -189,7 +192,6 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
             }
 
             while (opModeIsActive()) {
-
                 //Tensor flow code
                 if (tfod != null) {
                     // getUpdatedRecognitions() will return null if no new information is available since
