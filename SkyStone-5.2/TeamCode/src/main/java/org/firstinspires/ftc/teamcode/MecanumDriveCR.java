@@ -4,13 +4,14 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
 
-public class AshCode extends LinearOpMode{
+public class MecanumDriveCR extends LinearOpMode{
 
-    private float stickSensitivity = 0.13f; //> than this gets registered as input
+    private float stickSensitivity = 0.25f; //> than this gets registered as input
 
     // Gabe told me to do this. Help.
     public DcMotor leftMotor;
@@ -21,55 +22,44 @@ public class AshCode extends LinearOpMode{
     public float motorPower = 1f;
 
     public DcMotor liftPivotMotor;
-    public float liftPivotServoPos = 0; //What the motor above's current pos is; Sets to this at start
-    public float liftPivotSensitivity = 0.5f;
-    private boolean liftLocked; //If true, the lift stays in place
-    private float liftLockPower = 0.5f; //What the motors's power needs to be to stay in place holding our lift's weight
+    public float liftPivotPower = 0.3f;
 
-    public float servoSensitivity = 0.005f;
-    public Servo intakeServo;
+    public float servoSensitivity = 0.1f;
+    public float servoPower = 1;
+    public CRServo intakeExtensionServo;
+    public CRServo intakeMainServo;
 
     @Override
     public void runOpMode()
     {
-        //connects motors to hub & phone- use name in quotes for config
+        //Connects motors to hub & phone- use name in quotes for config
         leftMotor = hardwareMap.get(DcMotor.class, "left_Motor");
         leftMotor2 = hardwareMap.get(DcMotor.class, "left_Motor2");
 
         rightMotor = hardwareMap.get(DcMotor.class, "right_Motor");
         rightMotor2 = hardwareMap.get(DcMotor.class, "right_Motor2");
 
-        /*drawerMotor = hardwareMap.get(DcMotor.class, "drawer_Motor");
-        liftPivotMotor= hardwareMap.get(DcMotor.class, "pivot_Motor");
-        intakeServo1 = hardwareMap.get(CRServo.class, "leftVexMotor");
-        intakeServo2 = hardwareMap.get(CRServo.class, "rightVexMotor");
-        intakePivotServo = hardwareMap.get(Servo.class, "intakePivotServo");*/
+        liftPivotMotor= hardwareMap.get(DcMotor.class, "liftPivotMotor");
 
-        intakeServo = hardwareMap.get(Servo.class, "intakeServo");
+        intakeExtensionServo = hardwareMap.get(CRServo.class, "intakeExtensionServo");
+        intakeMainServo = hardwareMap.get(CRServo.class, "intakeMainServo");
 
         leftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftMotor.setDirection(DcMotor.Direction.FORWARD);
-        leftMotor2.setDirection(DcMotor.Direction.FORWARD);
-        rightMotor.setDirection(DcMotor.Direction.FORWARD);
-        rightMotor2.setDirection(DcMotor.Direction.FORWARD);
+        leftMotor.setDirection(DcMotor.Direction.REVERSE);
+        leftMotor2.setDirection(DcMotor.Direction.REVERSE);
+        rightMotor.setDirection(DcMotor.Direction.REVERSE);
+        rightMotor2.setDirection(DcMotor.Direction.REVERSE);
 
-        /*drawerMotor.setDirection(DcMotor.Direction.REVERSE);
-        drawerMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        liftPivotMotor.setZeroPowerBehavior((DcMotor.ZeroPowerBehavior.BRAKE));*/
-
+        liftPivotMotor.setDirection(DcMotor.Direction.FORWARD);
+        liftPivotMotor.setZeroPowerBehavior((DcMotor.ZeroPowerBehavior.BRAKE));
 
         leftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        //intakePivotServo.setPosition(intakePivotServoPos);
-
-        //drawerMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //drawerMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         waitForStart(); //press play button, actives opMode
 
@@ -77,11 +67,9 @@ public class AshCode extends LinearOpMode{
         {
             drive();
             Intake();
-            //pivotLift();
-            //toggleIntake();
-            //toggleDrawerSlides();
+            pivotLift();
+
             telemetry.update();
-            //telemetry.addData("drawerMotor", drawerMotor.getCurrentPosition());
         }//opModeIsActive
 
     }//runOpMode
@@ -134,18 +122,52 @@ public class AshCode extends LinearOpMode{
 
     public void Intake()
     {
-        //Servo
-        if(gamepad2.a)
-            intakeServo.setPosition(-1);
+        //Back extension servo
         if(gamepad2.y)
-            intakeServo.setPosition(1);
+            intakeExtensionServo.setPower(0.7);
+        else if(gamepad2.a)
+            intakeExtensionServo.setPower(-0.7);
+        else
+            intakeExtensionServo.setPower(0);
 
-        telemetry.addData("Servo Pos / Port" ,intakeServo.getPosition() + " | " + intakeServo.getPortNumber());
+        if(gamepad2.x)
+            intakeMainServo.setPower(0.7);
+        else if(gamepad2.b)
+            intakeMainServo.setPower(-0.7);
+        else
+            intakeMainServo.setPower(0);
+
+        /*if(Math.abs(gamepad2.left_stick_y) > servoSensitivity)
+            intakeExtensionServo.setPower(gamepad2.left_stick_y * servoPower);
+        if(Math.abs(gamepad2.right_stick_y) > servoSensitivity)
+            intakeMainServo.setPower(gamepad2.right_stick_y * servoPower);*/
+
+        telemetry.addData("Ext Servo Pos / Port" ,intakeExtensionServo.getPower() + " | " + intakeExtensionServo.getPortNumber());
+        telemetry.addData("Main Servo Pos / Port" ,intakeMainServo.getPower() + " | " + intakeMainServo.getPortNumber());
     }
 
     public void pivotLift() {
-        if(Math.abs(gamepad2.right_stick_y) > stickSensitivity)
-            liftPivotMotor.setPower((gamepad2.right_stick_y * liftPivotSensitivity));
+        /*if(Math.abs(gamepad2.right_stick_y) > stickSensitivity)
+            liftPivotMotor.setPower((gamepad2.right_stick_y * liftPivotPower));*/
+
+        if(gamepad2.dpad_up)
+        {
+            liftPivotMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            liftPivotMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            liftPivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            liftPivotMotor.setTargetPosition(400);
+            liftPivotMotor.setPower(0.3);
+        }
+        if(gamepad2.dpad_down)
+        {
+            liftPivotMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            liftPivotMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            liftPivotMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            liftPivotMotor.setTargetPosition(-400);
+            liftPivotMotor.setPower(0.3);
+        }
+
+        telemetry.addData("Lift Pivot Motor" ,liftPivotMotor.getCurrentPosition());
         /*if(Math.abs(gamepad2.left_stick_y) > stickSensitivity)
         {
             liftPivotMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
