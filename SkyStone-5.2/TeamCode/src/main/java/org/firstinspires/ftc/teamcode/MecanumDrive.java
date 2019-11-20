@@ -103,6 +103,7 @@ public class MecanumDrive extends LinearOpMode{
         Note: we forgot to include the rightstick in the if statement so
         the robot wasn't accounting for it at all (lol)
          */
+
         if((Math.abs(gamepad1.left_stick_x) > 0.2 || (Math.abs(gamepad1.left_stick_y) > 0.2 )) || (Math.abs(gamepad1.right_stick_x) > 0.2 || (Math.abs(gamepad1.right_stick_y) > 0.2 )))
         {
             double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
