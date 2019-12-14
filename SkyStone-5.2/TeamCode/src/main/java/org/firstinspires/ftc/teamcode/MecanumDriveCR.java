@@ -8,10 +8,10 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
+
 public class MecanumDriveCR extends LinearOpMode{
 
     private float stickSensitivity = 0.25f; //> than this gets registered as input
-
 
     public DcMotor leftMotor;
     public DcMotor leftMotor2;
@@ -38,12 +38,16 @@ public class MecanumDriveCR extends LinearOpMode{
 
         rightMotor = hardwareMap.get(DcMotor.class, "right_Motor"); //2
         rightMotor2 = hardwareMap.get(DcMotor.class, "right_Motor2"); //3
+        leftMotor = hardwareMap.get(DcMotor.class, "left_Motor");
+        leftMotor2 = hardwareMap.get(DcMotor.class, "left_Motor2");
+
+        rightMotor = hardwareMap.get(DcMotor.class, "right_Motor");
+        rightMotor2 = hardwareMap.get(DcMotor.class, "right_Motor2");
 
         liftPivotMotor= hardwareMap.get(DcMotor.class, "liftPivotMotor");
 
         intakeExtensionServo = hardwareMap.get(CRServo.class, "intakeExtensionServo");
         intakeMainServo = hardwareMap.get(CRServo.class, "intakeMainServo");
-
 
         leftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -53,6 +57,9 @@ public class MecanumDriveCR extends LinearOpMode{
         leftMotor2.setDirection(DcMotor.Direction.REVERSE);
         rightMotor.setDirection(DcMotor.Direction.REVERSE);
         rightMotor2.setDirection(DcMotor.Direction.REVERSE);
+
+        liftPivotMotor.setDirection(DcMotor.Direction.FORWARD);
+        liftPivotMotor.setZeroPowerBehavior((DcMotor.ZeroPowerBehavior.BRAKE));
 
         leftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -79,11 +86,18 @@ public class MecanumDriveCR extends LinearOpMode{
 
     public void drive()
     {
+        /*
+        deadzone. If result of setPower() is small. Telemetry was giving values for setPower so idk xy cords.
+        Note: we forgot to include the rightstick in the if statement so
+        the robot wasn't accounting for it at all (lol)
+         */
         if((Math.abs(gamepad1.left_stick_x) > 0.2 || (Math.abs(gamepad1.left_stick_y) > 0.2 )) || (Math.abs(gamepad1.right_stick_x) > 0.2 || (Math.abs(gamepad1.right_stick_y) > 0.2 )))
         {
             double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
             double robotAngle = Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
-            double rightX = gamepad1.right_stick_x;
+
+            double rightX = -gamepad1.right_stick_x;
+
             final double v1 = r * Math.cos(robotAngle) + rightX * motorPower;
             final double v2 = r * Math.sin(robotAngle) - rightX * motorPower;
             final double v3 = r * Math.sin(robotAngle) + rightX * motorPower;
@@ -116,6 +130,7 @@ public class MecanumDriveCR extends LinearOpMode{
 
         telemetry.addData("Left Stick X: ", gamepad1.left_stick_x);
         telemetry.addData("Left Stick Y: ", gamepad1.left_stick_y);
+
         //switch left drivetrain with right
     }
 
@@ -123,15 +138,33 @@ public class MecanumDriveCR extends LinearOpMode{
     {
         //Back extension servo
         if(gamepad2.dpad_up)
-            intakeExtensionServo.setPower(-0.7);
+            intakeExtensionServo.setPower(-0.7); //goes forward
         else if(gamepad2.dpad_down)
-            intakeExtensionServo.setPower(0.7);
+            intakeExtensionServo.setPower(0.7); //goes backward
         else
             intakeExtensionServo.setPower(0);
 
         if(gamepad2.y)
-            intakeMainServo.setPower(0.7);
+            intakeMainServo.setPower(0.7); //goes forward
         else if(gamepad2.a)
+            intakeMainServo.setPower(-0.7); //goes backward
+        else
+            intakeMainServo.setPower(0);
+    }
+
+    public void Intake()
+    {
+        //Back extension servo
+        if(gamepad2.y)
+            intakeExtensionServo.setPower(0.7);
+        else if(gamepad2.a)
+            intakeExtensionServo.setPower(-0.7);
+        else
+            intakeExtensionServo.setPower(0);
+
+        if(gamepad2.x)
+            intakeMainServo.setPower(0.7);
+        else if(gamepad2.b)
             intakeMainServo.setPower(-0.7);
         else
             intakeMainServo.setPower(0);
@@ -145,7 +178,7 @@ public class MecanumDriveCR extends LinearOpMode{
         telemetry.addData("Main Servo Pos / Port" ,intakeMainServo.getPower() + " | " + intakeMainServo.getPortNumber());
     }
 
-    public void pivotLift()
+   public void pivotLift()
     {
         stickSensitivity = .2f;
         if(-gamepad2.left_stick_y > stickSensitivity)
@@ -157,4 +190,5 @@ public class MecanumDriveCR extends LinearOpMode{
         telemetry.addData("Lift Pivot Motor" ,liftPivotMotor.getCurrentPosition());
         telemetry.addData("Left Joystick", -gamepad2.left_stick_y);
     }
+
 }

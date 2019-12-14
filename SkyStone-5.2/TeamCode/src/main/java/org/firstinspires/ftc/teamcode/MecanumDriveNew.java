@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp
 
-public class AshCode extends LinearOpMode{
+public class MecanumDriveNew extends LinearOpMode{
 
     private float stickSensitivity = 0.13f; //> than this gets registered as input
 
@@ -27,7 +27,8 @@ public class AshCode extends LinearOpMode{
     private float liftLockPower = 0.5f; //What the motors's power needs to be to stay in place holding our lift's weight
 
     public float servoSensitivity = 0.005f;
-    public Servo intakeServo;
+    public Servo intakeExtensionServo;
+    public Servo intakeMainServo;
 
     @Override
     public void runOpMode()
@@ -45,7 +46,8 @@ public class AshCode extends LinearOpMode{
         intakeServo2 = hardwareMap.get(CRServo.class, "rightVexMotor");
         intakePivotServo = hardwareMap.get(Servo.class, "intakePivotServo");*/
 
-        intakeServo = hardwareMap.get(Servo.class, "intakeServo");
+        intakeExtensionServo = hardwareMap.get(Servo.class, "intakeExtensionServo");
+        intakeMainServo = hardwareMap.get(Servo.class, "intakeMainServo");
 
         leftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -134,18 +136,27 @@ public class AshCode extends LinearOpMode{
 
     public void Intake()
     {
-        //Servo
+        //Back extension servo
         if(gamepad2.a)
-            intakeServo.setPosition(-1);
-        if(gamepad2.y)
-            intakeServo.setPosition(1);
+            intakeExtensionServo.setPosition(-1);
+        if(gamepad2.b)
+            intakeExtensionServo.setPosition(1);
 
-        telemetry.addData("Servo Pos / Port" ,intakeServo.getPosition() + " | " + intakeServo.getPortNumber());
+        //Main servo
+        if(gamepad2.x)
+            intakeMainServo.setPosition(-1);
+        if(gamepad2.y)
+            intakeMainServo.setPosition(1);
+
+        telemetry.addData("Ext Servo Pos / Port" ,intakeExtensionServo.getPosition() + " | " + intakeExtensionServo.getPortNumber());
+        telemetry.addData("Main Servo Pos / Port" ,intakeMainServo.getPosition() + " | " + intakeMainServo.getPortNumber());
     }
 
     public void pivotLift() {
         if(Math.abs(gamepad2.right_stick_y) > stickSensitivity)
             liftPivotMotor.setPower((gamepad2.right_stick_y * liftPivotSensitivity));
+
+        telemetry.addData("Lift Pivot Pos" ,liftPivotMotor.getCurrentPosition());
         /*if(Math.abs(gamepad2.left_stick_y) > stickSensitivity)
         {
             liftPivotMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
