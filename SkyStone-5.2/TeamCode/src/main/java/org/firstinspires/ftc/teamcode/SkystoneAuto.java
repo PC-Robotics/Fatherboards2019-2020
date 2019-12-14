@@ -405,7 +405,7 @@ public class SkystoneAuto extends LinearOpMode {
             telemetry.addData("Location: ", "Offscreen");
 
         telemetry.update();
-
+        
         while(true)
         {
 

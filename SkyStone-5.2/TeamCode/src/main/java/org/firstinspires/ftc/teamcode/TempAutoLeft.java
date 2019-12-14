@@ -101,19 +101,118 @@ public class TempAutoLeft extends LinearOpMode {
         waitForStart(); //press play button, actives opMode
 
         if (opModeIsActive()) {
-            leftMotor.setPower(-0.5);
-            rightMotor.setPower(0.5);
-            leftMotor2.setPower(0.5);
-            rightMotor2.setPower(-0.5);
 
-            sleep(3000);
+            forward();
+            liftUp();
+            intakeOut();
+            sleep(2000);
 
-            leftMotor.setPower(0);
-            rightMotor.setPower(0);
-            leftMotor2.setPower(0);
-            rightMotor2.setPower(0);
+            brake();
+            intakeIn();
+            liftDown();
+            sleep(4000);
 
-            sleep(26500);
+            backward();
+            intakeHold();
+            sleep(4000);
+
+            brake();
+            sleep(1000);
+
+            strafeLeft();
+            sleep(4000);
+
+            brake();
+            sleep(1000);
+
+            intakeRelease();
+            sleep(500);
+
+            intakeBrake();
+            sleep(2000);
+
         }
     }
+
+    public void strafeRight()
+    {
+        leftMotor.setPower(0.5);
+        rightMotor.setPower(-0.5);
+        leftMotor2.setPower(-0.5);
+        rightMotor2.setPower(0.5);
+    }
+
+    public void strafeLeft()
+    {
+        leftMotor.setPower(-0.5);
+        rightMotor.setPower(0.5);
+        leftMotor2.setPower(0.5);
+        rightMotor2.setPower(-0.5);
+    }
+
+    public void brake()
+    {
+        leftMotor.setPower(0);
+        rightMotor.setPower(0);
+        leftMotor2.setPower(0);
+        rightMotor2.setPower(0);
+    }
+
+    public void forward()
+    {
+        leftMotor.setPower(0.5);
+        rightMotor.setPower(0.5);
+        leftMotor2.setPower(0.5);
+        rightMotor2.setPower(0.5);
+    }
+
+    public void backward()
+    {
+        leftMotor.setPower(-0.5);
+        rightMotor.setPower(-0.5);
+        leftMotor2.setPower(-0.5);
+        rightMotor2.setPower(-0.5);
+    }
+
+    public void liftUp()
+    {
+        liftPivotMotor.setPower(.7);
+    }
+
+    public void liftDown()
+    {
+        liftPivotMotor.setPower(.1);
+    }
+
+    public void intakeOut()
+    {
+        intakeMainServo.setPower(0.7);
+        intakeExtensionServo.setPower(0.7);
+    }
+
+    public void intakeIn()
+    {
+        intakeMainServo.setPower(-0.7);
+        intakeExtensionServo.setPower(-0.7);
+    }
+
+    public void intakeHold()
+    {
+        intakeMainServo.setPower(-.1);
+        intakeExtensionServo.setPower(.1);
+    }
+
+    public void intakeRelease()
+    {
+        intakeMainServo.setPower(.1);
+        intakeExtensionServo.setPower(-.1);
+    }
+
+    public void intakeBrake()
+    {
+        intakeExtensionServo.setPower(0);
+        intakeMainServo.setPower(0);
+
+    }
+
 }
