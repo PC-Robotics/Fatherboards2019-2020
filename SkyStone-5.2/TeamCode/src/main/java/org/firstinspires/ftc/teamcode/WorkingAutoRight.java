@@ -45,10 +45,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
+@Autonomous(name = "WorkingAutoRight")
 
-@Autonomous(name = "TempAutoLeft")
-
-public class BingoBongoBlockGetAutoLeft extends LinearOpMode {
+public class WorkingAutoRight extends LinearOpMode {
     private float stickSensitivity = 0.25f; //> than this gets registered as input
 
     // Gabe told me to do this. Help.
@@ -102,17 +101,15 @@ public class BingoBongoBlockGetAutoLeft extends LinearOpMode {
 
         if (opModeIsActive()) {
 
-            strafeLeft();
+            strafeRight();
 
-            sleep(3000);
+            sleep(5000);
 
             brake();
-            
+
             sleep(26500);
         }
-
     }
-
 
     public void strafeRight()
     {
@@ -153,4 +150,5 @@ public class BingoBongoBlockGetAutoLeft extends LinearOpMode {
         leftMotor2.setPower(-0.5);
         rightMotor2.setPower(-0.5);
     }
+
 }

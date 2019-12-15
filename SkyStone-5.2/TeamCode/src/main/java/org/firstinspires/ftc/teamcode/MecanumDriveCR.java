@@ -96,12 +96,12 @@ public class MecanumDriveCR extends LinearOpMode{
             double r = Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y);
             double robotAngle = Math.atan2(gamepad1.left_stick_y, gamepad1.left_stick_x) - Math.PI / 4;
 
-            double rightX = -gamepad1.right_stick_x;
+            double rightX = gamepad1.right_stick_x;
 
-            final double v1 = r * Math.cos(robotAngle) + rightX * motorPower;
-            final double v2 = r * Math.sin(robotAngle) - rightX * motorPower;
-            final double v3 = r * Math.sin(robotAngle) + rightX * motorPower;
-            final double v4 = r * Math.cos(robotAngle) - rightX * motorPower;
+            final double v1 = r * Math.cos(robotAngle) + rightX;
+            final double v2 = r * Math.sin(robotAngle) - rightX;
+            final double v3 = r * Math.sin(robotAngle) + rightX;
+            final double v4 = r * Math.cos(robotAngle) - rightX ;
 
             leftMotor.setPower(v1);
             rightMotor.setPower(v2);
@@ -138,16 +138,16 @@ public class MecanumDriveCR extends LinearOpMode{
     {
         //Back extension servo
         if(gamepad2.dpad_up)
-            intakeExtensionServo.setPower(-0.7); //goes forward
+            intakeExtensionServo.setPower(-1); //goes forward
         else if(gamepad2.dpad_down)
-            intakeExtensionServo.setPower(0.7); //goes backward
+            intakeExtensionServo.setPower(1); //goes backward
         else
             intakeExtensionServo.setPower(0);
 
         if(gamepad2.y)
-            intakeMainServo.setPower(0.7); //goes forward
+            intakeMainServo.setPower(1); //goes forward
         else if(gamepad2.a)
-            intakeMainServo.setPower(-0.7); //goes backward
+            intakeMainServo.setPower(-1); //goes backward
         else
             intakeMainServo.setPower(0);
     }
@@ -156,16 +156,16 @@ public class MecanumDriveCR extends LinearOpMode{
     {
         //Back extension servo
         if(gamepad2.y)
-            intakeExtensionServo.setPower(0.7);
+            intakeExtensionServo.setPower(1);
         else if(gamepad2.a)
-            intakeExtensionServo.setPower(-0.7);
+            intakeExtensionServo.setPower(-1);
         else
             intakeExtensionServo.setPower(0);
 
         if(gamepad2.x)
-            intakeMainServo.setPower(0.7);
+            intakeMainServo.setPower(1);
         else if(gamepad2.b)
-            intakeMainServo.setPower(-0.7);
+            intakeMainServo.setPower(-1);
         else
             intakeMainServo.setPower(0);
 
@@ -182,7 +182,7 @@ public class MecanumDriveCR extends LinearOpMode{
     {
         stickSensitivity = .2f;
         if(-gamepad2.left_stick_y > stickSensitivity)
-            liftPivotMotor.setPower(.7);
+            liftPivotMotor.setPower(1);
         else if(gamepad2.left_stick_y > stickSensitivity)
             liftPivotMotor.setPower(.1);
         else
