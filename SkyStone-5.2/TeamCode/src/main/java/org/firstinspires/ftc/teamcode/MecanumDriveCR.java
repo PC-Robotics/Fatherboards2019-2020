@@ -97,10 +97,10 @@ public class MecanumDriveCR extends LinearOpMode{
 
             double rightX = gamepad1.right_stick_x;
 
-            final double v1 = r * Math.cos(robotAngle) + rightX * motorPower;
-            final double v2 = r * Math.sin(robotAngle) - rightX * motorPower;
-            final double v3 = r * Math.sin(robotAngle) + rightX * motorPower;
-            final double v4 = r * Math.cos(robotAngle) - rightX * motorPower;
+            final double v1 = r * Math.cos(robotAngle) + rightX;
+            final double v2 = r * Math.sin(robotAngle) - rightX;
+            final double v3 = r * Math.sin(robotAngle) + rightX;
+            final double v4 = r * Math.cos(robotAngle) - rightX ;
 
             if (v1 > 0)
                 leftMotor.setPower(v1);
@@ -146,18 +146,16 @@ public class MecanumDriveCR extends LinearOpMode{
             intakeClawServo.setPower(-.1f);
             sleep(1000);
         }
-        //change the variable name to do some fixing up...
-        if(gamepad2.y)
-            intakeExtensionServo.setPower(.9f); //goes forward
+
+       if(gamepad2.y)
+            intakeExtensionServo.setPower(1);
         else if(gamepad2.a)
-            intakeExtensionServo.setPower(-.9f); //goes backward... do we know if higher numbers work?
+            intakeExtensionServo.setPower(-1);
         else
             intakeExtensionServo.setPower(0);
-
-        telemetry.addData("Claw: ", intakeClawServo.getPower());
     }
 
-   public void pivotLift()
+    public void pivotLift()
     {
         stickSensitivity = .2f;
         if(-gamepad2.left_stick_y > stickSensitivity)
