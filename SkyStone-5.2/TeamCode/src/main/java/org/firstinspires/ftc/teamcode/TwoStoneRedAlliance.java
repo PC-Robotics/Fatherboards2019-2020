@@ -32,6 +32,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -71,10 +72,11 @@ import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocaliz
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-@Autonomous(name = "SkystoneAuto")
-//@Disabled
-public class SkystoneAuto extends LinearOpMode {
+@Autonomous(name = "TwoStoneRedAlliance")
 
+public class TwoStoneRedAlliance extends LinearOpMode {
+
+    AutonomousObject robot = new AutonomousObject();
     // IMPORTANT:  For Phone Camera, set 1) the camera source and 2) the orientation, based on how your phone is mounted:
     // 1) Camera Source.  Valid choices are:  BACK (behind screen) or FRONT (selfie side)
     // 2) Phone Orientation. Choices are: PHONE_IS_PORTRAIT = true (portrait) or PHONE_IS_PORTRAIT = false (landscape)
@@ -82,7 +84,7 @@ public class SkystoneAuto extends LinearOpMode {
     // NOTE: If you are running on a CONTROL HUB, with only one USB WebCam, you must select CAMERA_CHOICE = BACK; and PHONE_IS_PORTRAIT = false;
     //
     private static final VuforiaLocalizer.CameraDirection CAMERA_CHOICE = BACK;
-    private static final boolean PHONE_IS_PORTRAIT = false  ;
+    private static final boolean PHONE_IS_PORTRAIT = true;
 
     /*
      * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
@@ -124,7 +126,7 @@ public class SkystoneAuto extends LinearOpMode {
     private float phoneYRotate    = 0;
     private float phoneZRotate    = 0;
 
-    private float stickSensitivity = 0.13f; //> than this gets registered as input
+    private float stickSensitivity = 0.1f; //> than this gets registered as input
 
     public DcMotor leftMotor;
     public DcMotor leftMotor2;
@@ -143,7 +145,9 @@ public class SkystoneAuto extends LinearOpMode {
 
     public float xVal; //Returned by vuforia
 
-    @Override public void runOpMode() {
+    @Override
+    public void runOpMode() {
+
         /*
          * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
          * We can pass Vuforia the handle to a camera preview resource (on the RC phone);
@@ -151,35 +155,8 @@ public class SkystoneAuto extends LinearOpMode {
          */
 
         //Connects motors to hub & phone- use name in quotes for config
-        leftMotor = hardwareMap.get(DcMotor.class, "left_Motor");
-        leftMotor2 = hardwareMap.get(DcMotor.class, "left_Motor2");
 
-        rightMotor = hardwareMap.get(DcMotor.class, "right_Motor");
-        rightMotor2 = hardwareMap.get(DcMotor.class, "right_Motor2");
-
-        liftPivotMotor = hardwareMap.get(DcMotor.class, "liftPivotMotor");
-
-        intakeExtensionServo = hardwareMap.get(CRServo .class, "intakeExtensionServo");
-        intakeMainServo = hardwareMap.get(CRServo.class, "intakeMainServo");
-
-        leftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftMotor.setDirection(DcMotor.Direction.REVERSE);
-        leftMotor2.setDirection(DcMotor.Direction.REVERSE);
-        rightMotor.setDirection(DcMotor.Direction.REVERSE);
-        rightMotor2.setDirection(DcMotor.Direction.REVERSE);
-
-        liftPivotMotor.setDirection(DcMotor.Direction.FORWARD);
-        liftPivotMotor.setZeroPowerBehavior((DcMotor.ZeroPowerBehavior.BRAKE));
-
-        leftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        leftMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        rightMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        liftPivotMotor.setPower(0.7f);
+//        liftPivotMotor.setPower(0.7f);... why is this line here?
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
@@ -317,6 +294,7 @@ public class SkystoneAuto extends LinearOpMode {
         // The two examples below assume that the camera is facing forward out the front of the robot.
 
         // We need to rotate the camera around it's long axis to bring the correct camera forward.
+
         if (CAMERA_CHOICE == BACK) {
             phoneYRotate = -90;
         } else {
@@ -349,7 +327,43 @@ public class SkystoneAuto extends LinearOpMode {
         // CONSEQUENTLY do not put any driving commands in this loop.
         // To restore the normal opmode structure, just un-comment the following line:
 
-        // waitForStart();
+
+        waitForStart();
+        while(opModeIsActive())
+        {
+            robot.init(hardwareMap);
+
+            //sleeps have to be here and they can't be in the method but it's fine...
+            robot.clawUp();
+            robot.forward();
+            sleep(1300);
+
+            robot.brake();
+            robot.clawDown();
+            sleep(1000);
+
+            robot.backward();
+            robot.clawDown();
+            sleep(1000);
+
+            robot.brake();
+            sleep(1000);
+
+            robot.strafeRight();
+            sleep(3500);
+
+            robot.brake();
+            sleep(1000);
+
+            robot.clawUp();
+            sleep(500);
+
+            robot.strafeLeft();
+            sleep(2000);
+
+            robot.brake();
+            sleep(25000);
+        }
 
         // Note: To use the remote camera preview:
         // AFTER you hit Init on the Driver Station, use the "options menu" to select "Camera Stream"
@@ -405,10 +419,6 @@ public class SkystoneAuto extends LinearOpMode {
             telemetry.addData("Location: ", "Offscreen");
 
         telemetry.update();
-        
-        while(true)
-        {
 
-        }
     }
 }

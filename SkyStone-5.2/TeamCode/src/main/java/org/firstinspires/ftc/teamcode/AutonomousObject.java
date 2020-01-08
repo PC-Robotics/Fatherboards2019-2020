@@ -34,6 +34,10 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import static java.lang.Thread.sleep;
 
 
 /**
@@ -46,9 +50,9 @@ import com.qualcomm.robotcore.hardware.DcMotor;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-@Autonomous(name = "TempAutoLeft")
 
-public class TempAutoLeft extends LinearOpMode {
+//if nothing works it's because you didn't make the hardware class right...
+public class AutonomousObject {
     private float stickSensitivity = 0.25f; //> than this gets registered as input
 
     // Gabe told me to do this. Help.
@@ -57,38 +61,35 @@ public class TempAutoLeft extends LinearOpMode {
     public DcMotor rightMotor;
     public DcMotor rightMotor2;
 
-    public float motorPower = 1f;
-
     public DcMotor liftPivotMotor;
-    public float liftPivotPower = 0.3f;
 
-    public float servoSensitivity = 0.1f;
-    public float servoPower = 1;
     public CRServo intakeExtensionServo;
-    public CRServo intakeMainServo;
+    public CRServo intakeClawServo;
 
-    @Override
-    public void runOpMode() {
+    HardwareMap hwMap;
+    public void init(HardwareMap ahwMap) {
+
+        hwMap = ahwMap;
         //Connects motors to hub & phone- use name in quotes for config
-        leftMotor = hardwareMap.get(DcMotor.class, "left_Motor");
-        leftMotor2 = hardwareMap.get(DcMotor.class, "left_Motor2");
+        leftMotor = hwMap.get(DcMotor.class, "left_Motor");
+        leftMotor2 = hwMap.get(DcMotor.class, "left_Motor2");
 
-        rightMotor = hardwareMap.get(DcMotor.class, "right_Motor");
-        rightMotor2 = hardwareMap.get(DcMotor.class, "right_Motor2");
+        rightMotor = hwMap.get(DcMotor.class, "right_Motor");
+        rightMotor2 = hwMap.get(DcMotor.class, "right_Motor2");
 
-        liftPivotMotor = hardwareMap.get(DcMotor.class, "liftPivotMotor");
+        liftPivotMotor = hwMap.get(DcMotor.class, "liftPivotMotor");
 
-        intakeExtensionServo = hardwareMap.get(CRServo.class, "intakeExtensionServo");
-        intakeMainServo = hardwareMap.get(CRServo.class, "intakeMainServo");
+        intakeExtensionServo = hwMap.get(CRServo.class, "intakeExtensionServo");
+        intakeClawServo = hwMap.get(CRServo.class, "intakeClawServo");
 
         leftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftMotor.setDirection(DcMotor.Direction.REVERSE);
-        leftMotor2.setDirection(DcMotor.Direction.REVERSE);
-        rightMotor.setDirection(DcMotor.Direction.REVERSE);
-        rightMotor2.setDirection(DcMotor.Direction.REVERSE);
+        leftMotor.setDirection(DcMotor.Direction.FORWARD);
+        leftMotor2.setDirection(DcMotor.Direction.FORWARD);
+        rightMotor.setDirection(DcMotor.Direction.FORWARD);
+        rightMotor2.setDirection(DcMotor.Direction.FORWARD);
 
         liftPivotMotor.setDirection(DcMotor.Direction.FORWARD);
         liftPivotMotor.setZeroPowerBehavior((DcMotor.ZeroPowerBehavior.BRAKE));
@@ -98,51 +99,9 @@ public class TempAutoLeft extends LinearOpMode {
         rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        waitForStart(); //press play button, actives opMode
-
-        if (opModeIsActive()) {
-
-            forward();
-            liftUp();
-            intakeOut();
-            sleep(2000);
-
-            brake();
-            intakeIn();
-            liftDown();
-            sleep(4000);
-
-            backward();
-            intakeHold();
-            sleep(4000);
-
-            brake();
-            sleep(1000);
-
-            strafeLeft();
-            sleep(4000);
-
-            brake();
-            sleep(1000);
-
-            intakeRelease();
-            sleep(500);
-
-            intakeBrake();
-            sleep(2000);
-
-        }
     }
 
-    public void strafeRight()
-    {
-        leftMotor.setPower(0.5);
-        rightMotor.setPower(-0.5);
-        leftMotor2.setPower(-0.5);
-        rightMotor2.setPower(0.5);
-    }
-
-    public void strafeLeft()
+    public void strafeRight ()
     {
         leftMotor.setPower(-0.5);
         rightMotor.setPower(0.5);
@@ -150,7 +109,15 @@ public class TempAutoLeft extends LinearOpMode {
         rightMotor2.setPower(-0.5);
     }
 
-    public void brake()
+    public void strafeLeft ()
+    {
+        leftMotor.setPower(0.5);
+        rightMotor.setPower(-0.5);
+        leftMotor2.setPower(-0.5);
+        rightMotor2.setPower(0.5);
+    }
+
+    public void brake ()
     {
         leftMotor.setPower(0);
         rightMotor.setPower(0);
@@ -158,7 +125,7 @@ public class TempAutoLeft extends LinearOpMode {
         rightMotor2.setPower(0);
     }
 
-    public void forward()
+    public void forward ()
     {
         leftMotor.setPower(0.5);
         rightMotor.setPower(0.5);
@@ -166,7 +133,7 @@ public class TempAutoLeft extends LinearOpMode {
         rightMotor2.setPower(0.5);
     }
 
-    public void backward()
+    public void backward ()
     {
         leftMotor.setPower(-0.5);
         rightMotor.setPower(-0.5);
@@ -174,45 +141,39 @@ public class TempAutoLeft extends LinearOpMode {
         rightMotor2.setPower(-0.5);
     }
 
-    public void liftUp()
+    public void liftUp ()
     {
         liftPivotMotor.setPower(.7);
     }
 
-    public void liftDown()
+    public void liftDown ()
     {
         liftPivotMotor.setPower(.1);
     }
 
-    public void intakeOut()
+    public void clawUp()
     {
-        intakeMainServo.setPower(0.7);
-        intakeExtensionServo.setPower(0.7);
+        intakeClawServo.setPower(-0.3);
     }
 
-    public void intakeIn()
+    public void clawDown()
     {
-        intakeMainServo.setPower(-0.7);
-        intakeExtensionServo.setPower(-0.7);
+        intakeClawServo.setPower(-0.1);
     }
 
-    public void intakeHold()
+    public void intakeHold ()
     {
-        intakeMainServo.setPower(-.1);
-        intakeExtensionServo.setPower(.1);
+        intakeClawServo.setPower(-.1);
+        intakeClawServo.setPower(.1);
     }
 
-    public void intakeRelease()
+    public void intakeRelease ()
     {
-        intakeMainServo.setPower(.1);
+        intakeClawServo.setPower(.1);
         intakeExtensionServo.setPower(-.1);
     }
 
-    public void intakeBrake()
-    {
-        intakeExtensionServo.setPower(0);
-        intakeMainServo.setPower(0);
 
-    }
+
 
 }
