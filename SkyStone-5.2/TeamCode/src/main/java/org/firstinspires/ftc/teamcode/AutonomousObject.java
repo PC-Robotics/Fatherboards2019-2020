@@ -176,7 +176,7 @@ public class AutonomousObject {
     }
 
     public void clawUp() {
-        intakeClawServo.setPower(-0.3);
+        intakeClawServo.setPower(-0.6);
     }
 
     public void clawDown() {

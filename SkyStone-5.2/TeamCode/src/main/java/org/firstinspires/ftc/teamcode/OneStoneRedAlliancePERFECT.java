@@ -353,14 +353,14 @@ public class OneStoneRedAlliancePERFECT extends LinearOpMode {
             sleep(1000);
 
             robot.strafeRight();
-            sleep(3700);
+            sleep(4000); //4000
 
             robot.brake();
             sleep(1000);
 
             robot.clawUp();
             robot.backward();
-            sleep(250);
+            sleep(500);
 
             robot.brake();
             robot.liftDown();
@@ -368,10 +368,11 @@ public class OneStoneRedAlliancePERFECT extends LinearOpMode {
             sleep(700);
 
             robot.strafeLeft();
-            sleep(1500);
+            sleep(1500); //1600
 
             robot.brake();
             sleep(25000);
+
             //sleeps have to be here and they can't be in the method but it's fine... //first backwards a lil bit more.. same with brake...
             /*robot.clawUp();
             robot.forward();
@@ -441,6 +442,7 @@ public class OneStoneRedAlliancePERFECT extends LinearOpMode {
         // AFTER you hit Init on the Driver Station, use the "options menu" to select "Camera Stream"
         // Tap the preview window to receive a fresh image.
 
+        /*
         targetsSkyStone.activate();
         while (!isStopRequested() && !targetVisible) {
 
@@ -489,7 +491,7 @@ public class OneStoneRedAlliancePERFECT extends LinearOpMode {
             telemetry.addData("Location: ", "Left");
         else
             telemetry.addData("Location: ", "Offscreen");
-
+        */
         telemetry.update();
 
     }
