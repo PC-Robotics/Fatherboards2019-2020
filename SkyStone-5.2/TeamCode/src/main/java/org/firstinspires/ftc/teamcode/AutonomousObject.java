@@ -51,7 +51,6 @@ import static java.lang.Thread.sleep;
  * is explained below.
  */
 
-//if nothing works it's because you didn't make the hardware class right...
 public class AutonomousObject {
     private float stickSensitivity = 0.25f; //> than this gets registered as input
 
@@ -67,6 +66,7 @@ public class AutonomousObject {
     public CRServo intakeClawServo;
 
     HardwareMap hwMap;
+
     public void init(HardwareMap ahwMap) {
 
         hwMap = ahwMap;
@@ -86,10 +86,10 @@ public class AutonomousObject {
         leftMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftMotor.setDirection(DcMotor.Direction.FORWARD);
-        leftMotor2.setDirection(DcMotor.Direction.FORWARD);
-        rightMotor.setDirection(DcMotor.Direction.FORWARD);
-        rightMotor2.setDirection(DcMotor.Direction.FORWARD);
+        leftMotor.setDirection(DcMotor.Direction.REVERSE);
+        leftMotor2.setDirection(DcMotor.Direction.REVERSE);
+        rightMotor.setDirection(DcMotor.Direction.REVERSE);
+        rightMotor2.setDirection(DcMotor.Direction.REVERSE);
 
         liftPivotMotor.setDirection(DcMotor.Direction.FORWARD);
         liftPivotMotor.setZeroPowerBehavior((DcMotor.ZeroPowerBehavior.BRAKE));
@@ -101,79 +101,95 @@ public class AutonomousObject {
 
     }
 
-    public void strafeRight ()
-    {
-        leftMotor.setPower(-0.5);
-        rightMotor.setPower(0.5);
-        leftMotor2.setPower(0.5);
-        rightMotor2.setPower(-0.5);
-    }
-
-    public void strafeLeft ()
-    {
+    //    public void strafeRight ()
+//    {
+//        leftMotor.setPower(.7);
+//        rightMotor.setPower(-.7);
+//        leftMotor2.setPower(-.7);
+//        rightMotor2.setPower(.7);
+//    }
+//
+//    public void strafeLeft ()
+//    {
+//        leftMotor.setPower(-.7);
+//        rightMotor.setPower(.7);
+//        leftMotor2.setPower(.7);
+//        rightMotor2.setPower(-.7);
+//    }
+//
+//    public void forward ()
+//    {
+//        leftMotor.setPower(-1);
+//        rightMotor.setPower(-1);
+//        leftMotor2.setPower(-1);
+//        rightMotor2.setPower(-1);
+//    }
+//
+//    public void backward ()
+//    {
+//        leftMotor.setPower(1);
+//        rightMotor.setPower(1);
+//        leftMotor2.setPower(1);
+//        rightMotor2.setPower(1);
+//    }
+    public void strafeRight() {
         leftMotor.setPower(0.5);
         rightMotor.setPower(-0.5);
         leftMotor2.setPower(-0.5);
         rightMotor2.setPower(0.5);
     }
 
-    public void brake ()
-    {
+    public void strafeLeft() {
+        leftMotor.setPower(-0.5);
+        rightMotor.setPower(0.5);
+        leftMotor2.setPower(0.5);
+        rightMotor2.setPower(-0.5);
+    }
+
+    public void forward() {
+        leftMotor.setPower(-0.5);
+        rightMotor.setPower(-0.5);
+        leftMotor2.setPower(-0.5);
+        rightMotor2.setPower(-0.5);
+    }
+
+    public void backward() {
+        leftMotor.setPower(0.5);
+        rightMotor.setPower(0.5);
+        leftMotor2.setPower(0.5);
+        rightMotor2.setPower(0.5);
+    }
+
+    public void brake() {
         leftMotor.setPower(0);
         rightMotor.setPower(0);
         leftMotor2.setPower(0);
         rightMotor2.setPower(0);
     }
 
-    public void forward ()
-    {
-        leftMotor.setPower(0.5);
-        rightMotor.setPower(0.5);
-        leftMotor2.setPower(0.5);
-        rightMotor2.setPower(0.5);
+    public void liftUp() {
+        liftPivotMotor.setPower(.5f);
     }
 
-    public void backward ()
-    {
-        leftMotor.setPower(-0.5);
-        rightMotor.setPower(-0.5);
-        leftMotor2.setPower(-0.5);
-        rightMotor2.setPower(-0.5);
+    public void liftDown() {
+        liftPivotMotor.setPower(.01);
     }
 
-    public void liftUp ()
-    {
-        liftPivotMotor.setPower(.7);
-    }
-
-    public void liftDown ()
-    {
-        liftPivotMotor.setPower(.1);
-    }
-
-    public void clawUp()
-    {
+    public void clawUp() {
         intakeClawServo.setPower(-0.3);
     }
 
-    public void clawDown()
-    {
+    public void clawDown() {
         intakeClawServo.setPower(-0.1);
     }
 
-    public void intakeHold ()
-    {
-        intakeClawServo.setPower(-.1);
-        intakeClawServo.setPower(.1);
+    public void extendForward() {
+        intakeExtensionServo.setPower(-.7);
     }
 
-    public void intakeRelease ()
+    public void extendStop()
     {
-        intakeClawServo.setPower(.1);
-        intakeExtensionServo.setPower(-.1);
+        intakeExtensionServo.setPower(0);
     }
-
-
-
 
 }

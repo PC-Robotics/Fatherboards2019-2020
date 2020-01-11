@@ -72,9 +72,9 @@ import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocaliz
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-@Autonomous(name = "TwoStoneRedAlliance")
+@Autonomous(name = "OneStoneRedAlliancePERFECT")
 
-public class TwoStoneRedAlliance extends LinearOpMode {
+public class OneStoneRedAlliancePERFECT extends LinearOpMode {
 
     AutonomousObject robot = new AutonomousObject();
     // IMPORTANT:  For Phone Camera, set 1) the camera source and 2) the orientation, based on how your phone is mounted:
@@ -303,14 +303,15 @@ public class TwoStoneRedAlliance extends LinearOpMode {
 
         // Rotate the phone vertical about the X axis if it's in portrait mode
         if (PHONE_IS_PORTRAIT) {
-            phoneXRotate = 90 ;
+            phoneXRotate = 0 ; //90 before
         }
 
         // Next, translate the camera lens to where it is on the robot.
         // In this example, it is centered (left to right), but forward of the middle of the robot, and above ground level.
         final float CAMERA_FORWARD_DISPLACEMENT  = -4.0f * mmPerInch;   // eg: Camera is 4 Inches in front of robot center
         final float CAMERA_VERTICAL_DISPLACEMENT = 8.0f * mmPerInch;   // eg: Camera is 8 Inches above ground
-        final float CAMERA_LEFT_DISPLACEMENT     = 0;     // eg: Camera is ON the robot's center line
+        final float CAMERA_LEFT_DISPLACEMENT     = 0 * mmPerInch;     // eg: Camera is ON the robot's center line
+        //
 
         OpenGLMatrix robotFromCamera = OpenGLMatrix
                 .translation(CAMERA_FORWARD_DISPLACEMENT, CAMERA_LEFT_DISPLACEMENT, CAMERA_VERTICAL_DISPLACEMENT)
@@ -333,12 +334,13 @@ public class TwoStoneRedAlliance extends LinearOpMode {
         {
             robot.init(hardwareMap);
 
-            //sleeps have to be here and they can't be in the method but it's fine...
+            robot.extendForward();
             robot.clawUp();
             robot.forward();
             sleep(1300);
 
             robot.brake();
+            robot.extendStop();
             robot.clawDown();
             sleep(1000);
 
@@ -347,22 +349,92 @@ public class TwoStoneRedAlliance extends LinearOpMode {
             sleep(1000);
 
             robot.brake();
+            robot.liftUp();
             sleep(1000);
 
             robot.strafeRight();
-            sleep(3500);
+            sleep(3700);
 
             robot.brake();
             sleep(1000);
 
             robot.clawUp();
-            sleep(500);
+            robot.backward();
+            sleep(250);
+
+            robot.brake();
+            robot.liftDown();
+            robot.clawDown();
+            sleep(700);
 
             robot.strafeLeft();
-            sleep(2000);
+            sleep(1500);
 
             robot.brake();
             sleep(25000);
+            //sleeps have to be here and they can't be in the method but it's fine... //first backwards a lil bit more.. same with brake...
+            /*robot.clawUp();
+            robot.forward();
+            sleep(1000);
+
+            robot.brake();
+            robot.clawDown();
+            sleep(1000); //fixed
+
+            robot.backward();
+            robot.clawDown();
+            sleep(900);
+
+            robot.brake();
+            robot.liftUp();
+            robot.clawDown();
+            sleep(1200); //fixed
+
+            robot.strafeRight();
+            robot.liftUp();
+            sleep(2000);
+
+            //Right Side Of Field
+            robot.brake();
+            robot.liftDown();
+            robot.clawDown();
+            sleep(1000);
+
+            robot.clawUp();
+            sleep(500);
+
+            robot.backward();
+            sleep(200);
+
+            robot.brake();
+            sleep(500);
+
+            robot.strafeLeft();
+            sleep(2500); //play with this...
+
+            //comment out everything else and leave it on brake sleep for the remainder
+            //robot.brake();
+            //sleep(25000);
+            //block 2
+            robot.brake();
+            sleep(500);
+
+            robot.forward();
+            sleep( 800);
+
+            robot.brake();
+            robot.clawDown();
+            sleep(1000);
+
+            robot.backward();
+            robot.clawDown();
+            sleep(800);
+
+            robot.strafeRight();
+            sleep(5000);
+
+            robot.brake();
+            sleep(25000);*/
         }
 
         // Note: To use the remote camera preview:

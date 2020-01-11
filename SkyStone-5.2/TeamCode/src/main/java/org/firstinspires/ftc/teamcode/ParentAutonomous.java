@@ -10,9 +10,12 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @Disabled
 public class ParentAutonomous extends LinearOpMode {
+
+    AutonomousObject robot = new AutonomousObject();
+
     @Override
     public void runOpMode()
     {
-
+        
     }
 }

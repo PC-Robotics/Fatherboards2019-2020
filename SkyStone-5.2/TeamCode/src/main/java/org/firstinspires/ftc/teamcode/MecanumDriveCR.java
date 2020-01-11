@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class MecanumDriveCR extends LinearOpMode{
 
+    AutonomousObject robot = new AutonomousObject();
     private float stickSensitivity = 0.25f; //> than this gets registered as input
 
     public DcMotor leftMotor;
@@ -32,6 +33,7 @@ public class MecanumDriveCR extends LinearOpMode{
     @Override
     public void runOpMode()
     {
+        //robot.init(hardwareMap);
         //Connects motors to hub & phone- use name in quotes for config
 
         leftMotor = hardwareMap.get(DcMotor.class, "left_Motor"); //0
@@ -76,6 +78,7 @@ public class MecanumDriveCR extends LinearOpMode{
             drive();
             intake();
             pivotLift();
+//            diagnostic();
 
             telemetry.update();
         }//opModeIsActive
@@ -102,14 +105,11 @@ public class MecanumDriveCR extends LinearOpMode{
             final double v3 = r * Math.sin(robotAngle) + rightX;
             final double v4 = r * Math.cos(robotAngle) - rightX ;
 
-            if (v1 > 0)
-                leftMotor.setPower(v1);
-            if (v2 > 0)
-                rightMotor.setPower(v2);
-            if (v3 > 0)
-                leftMotor2.setPower(v3);
-            if (v4 > 0)
-                rightMotor2.setPower(v4);
+
+            leftMotor.setPower(v1);
+            rightMotor.setPower(v2);
+            leftMotor2.setPower(v3);
+            rightMotor2.setPower(v4);
         }
         else
         {
@@ -168,5 +168,24 @@ public class MecanumDriveCR extends LinearOpMode{
         telemetry.addData("Left Joystick", -gamepad2.left_stick_y);
     }
 
+//    public void diagnostic()
+//    {
+//        if(gamepad1.right_bumper){
+//            robot.forward();
+//            sleep(1000);
+//
+//            robot.strafeLeft();
+//            sleep(1000);
+//
+//            robot.backward();
+//            sleep(1000);
+//
+//            robot.strafeRight();
+//            sleep(1000);
+//        }
+//
+//
+//
+//    }
 
 }
