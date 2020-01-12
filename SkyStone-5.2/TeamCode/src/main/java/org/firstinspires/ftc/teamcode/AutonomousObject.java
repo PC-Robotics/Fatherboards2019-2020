@@ -52,6 +52,7 @@ import static java.lang.Thread.sleep;
  */
 
 public class AutonomousObject {
+
     private float stickSensitivity = 0.25f; //> than this gets registered as input
 
     // Gabe told me to do this. Help.
@@ -185,6 +186,10 @@ public class AutonomousObject {
 
     public void extendForward() {
         intakeExtensionServo.setPower(-.7);
+    }
+
+    public void extendBack() {
+        intakeExtensionServo.setPower(.7);
     }
 
     public void extendStop()
