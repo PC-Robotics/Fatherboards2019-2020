@@ -54,6 +54,7 @@ import static java.lang.Thread.sleep;
  */
 
 public class AutonomousObject {
+
     private float stickSensitivity = 0.25f; //> than this gets registered as input
     private final double encoderTicksPerInch = 42;
     private final int blockInches = 24;
@@ -343,6 +344,10 @@ public class AutonomousObject {
 
     public void extendForward() {
         intakeExtensionServo.setPower(1);
+    }
+
+    public void extendBack() {
+        intakeExtensionServo.setPower(.7);
     }
 
     public void extendStop()
