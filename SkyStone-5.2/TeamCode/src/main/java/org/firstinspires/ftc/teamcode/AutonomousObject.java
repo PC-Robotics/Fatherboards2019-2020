@@ -37,6 +37,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import java.util.Base64;
+
 import static java.lang.Thread.sleep;
 
 
@@ -53,7 +55,9 @@ import static java.lang.Thread.sleep;
 
 public class AutonomousObject {
     private float stickSensitivity = 0.25f; //> than this gets registered as input
-
+    private final double encoderTicksPerInch = 42;
+    private final int blockInches = 24;
+    private final float motorPower = .5f;
     // Gabe told me to do this. Help.
     public DcMotor leftMotor;
     public DcMotor leftMotor2;
@@ -67,7 +71,7 @@ public class AutonomousObject {
 
     HardwareMap hwMap;
 
-    public void init(HardwareMap ahwMap) {
+    public void init(HardwareMap ahwMap)  {
 
         hwMap = ahwMap;
         //Connects motors to hub & phone- use name in quotes for config
@@ -86,78 +90,232 @@ public class AutonomousObject {
         leftMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftMotor.setDirection(DcMotor.Direction.REVERSE);
+        leftMotor.setDirection(DcMotor.Direction.FORWARD);
         leftMotor2.setDirection(DcMotor.Direction.REVERSE);
-        rightMotor.setDirection(DcMotor.Direction.REVERSE);
-        rightMotor2.setDirection(DcMotor.Direction.REVERSE);
-
-        liftPivotMotor.setDirection(DcMotor.Direction.FORWARD);
-        liftPivotMotor.setZeroPowerBehavior((DcMotor.ZeroPowerBehavior.BRAKE));
+        rightMotor.setDirection(DcMotor.Direction.FORWARD);
+        rightMotor2.setDirection(DcMotor.Direction.FORWARD);
 
         leftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightMotor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        liftPivotMotor.setDirection(DcMotor.Direction.REVERSE);
+        liftPivotMotor.setZeroPowerBehavior((DcMotor.ZeroPowerBehavior.BRAKE));
+    }
+    /*
+    public void encoderDrive(int inches,
+                             double leftInches, double rightInches,
+                             double timeoutS) {
+
+        int ticks = inches * (int) encoderTicksPerInch;
+
+        int leftTarget1 = leftMotor.getCurrentPosition() + ticks;
+        int leftTarget2 = leftMotor2.getCurrentPosition() + ticks;
+        int rightTarget1 = rightMotor.getCurrentPosition() + ticks;
+        int rightTarget2 = rightMotor2.getCurrentPosition() + ticks;
+
+        leftMotor.setTargetPosition(leftTarget1);
+        leftMotor2.setTargetPosition(leftTarget2);
+        rightMotor.setTargetPosition(rightTarget1);
+        rightMotor2.setTargetPosition(rightTarget2);
+
+
+        // Turn On RUN_TO_POSITION
+            robot.leftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.rightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            // reset the timeout time and start motion.
+            runtime.reset();
+            robot.leftDrive.setPower(Math.abs(speed));
+            robot.rightDrive.setPower(Math.abs(speed));
+
+            // keep looping while we are still active, and there is time left, and both motors are running.
+            // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
+            // its target position, the motion will stop.  This is "safer" in the event that the robot will
+            // always end the motion as soon as possible.
+            // However, if you require that BOTH motors have finished their moves before the robot continues
+            // onto the next step, use (isBusy() || isBusy()) in the loop test.
+            while (opModeIsActive() &&
+                    (runtime.seconds() < timeoutS) &&
+                    (robot.leftDrive.isBusy() && robot.rightDrive.isBusy())) {
+
+                // Display it for the driver.
+                telemetry.addData("Path1", "Running to %7d :%7d", newLeftTarget, newRightTarget);
+                telemetry.addData("Path2", "Running at %7d :%7d",
+                        robot.leftDrive.getCurrentPosition(),
+                        robot.rightDrive.getCurrentPosition());
+                telemetry.update();
+            }
+
+            // Stop all motion;
+            robot.leftDrive.setPower(0);
+            robot.rightDrive.setPower(0);
+
+            // Turn off RUN_TO_POSITION
+            robot.leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+    }
+    public void strafeRight(int inches) {
+        int ticks = inches * (int) encoderTicksPerInch;
+
+        int leftTarget1 = leftMotor.getCurrentPosition() + ticks;
+        int leftTarget2 = leftMotor2.getCurrentPosition() + ticks;
+        int rightTarget1 = rightMotor.getCurrentPosition() + ticks;
+        int rightTarget2 = rightMotor2.getCurrentPosition() + ticks;
+
+        leftMotor.setTargetPosition(leftTarget1);
+        leftMotor2.setTargetPosition(leftTarget2);
+        rightMotor.setTargetPosition(rightTarget1);
+        rightMotor2.setTargetPosition(rightTarget2);
+
+        while(leftMotor.isBusy() || leftMotor2.isBusy() || rightMotor.isBusy() || rightMotor2.isBusy()) {
+            leftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            leftMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            rightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            rightMotor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+
+        strafeRight();
+
+        boolean achieved = leftMotor.getCurrentPosition() == leftTarget1 && leftMotor2.getCurrentPosition() == leftTarget2
+                && rightMotor.getCurrentPosition() == rightTarget1 && rightMotor2.getCurrentPosition() == rightTarget2;
+        //if(!(leftMotor.isBusy() && leftMotor2.isBusy() && rightMotor.isBusy() && rightMotor2.isBusy())) {
+            brake();
+        //    leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //    leftMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //    rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //    rightMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //}
+
+        leftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
     }
 
-    //    public void strafeRight ()
-//    {
-//        leftMotor.setPower(.7);
-//        rightMotor.setPower(-.7);
-//        leftMotor2.setPower(-.7);
-//        rightMotor2.setPower(.7);
-//    }
-//
-//    public void strafeLeft ()
-//    {
-//        leftMotor.setPower(-.7);
-//        rightMotor.setPower(.7);
-//        leftMotor2.setPower(.7);
-//        rightMotor2.setPower(-.7);
-//    }
-//
-//    public void forward ()
-//    {
-//        leftMotor.setPower(-1);
-//        rightMotor.setPower(-1);
-//        leftMotor2.setPower(-1);
-//        rightMotor2.setPower(-1);
-//    }
-//
-//    public void backward ()
-//    {
-//        leftMotor.setPower(1);
-//        rightMotor.setPower(1);
-//        leftMotor2.setPower(1);
-//        rightMotor2.setPower(1);
-//    }
-    public void strafeRight() {
-        leftMotor.setPower(0.5);
-        rightMotor.setPower(-0.5);
-        leftMotor2.setPower(-0.5);
-        rightMotor2.setPower(0.5);
+    public void strafeLeft(int inches) {
+        int ticks = inches * (int) encoderTicksPerInch;
+
+        int leftTarget1 = leftMotor.getCurrentPosition() + inches;
+        int leftTarget2 = leftMotor2.getCurrentPosition() + inches;
+        int rightTarget1 = rightMotor.getCurrentPosition() + inches;
+        int rightTarget2 = rightMotor2.getCurrentPosition() + inches;
+
+        leftMotor.setTargetPosition(leftTarget1);
+        leftMotor2.setTargetPosition(leftTarget2);
+        rightMotor.setTargetPosition(rightTarget1);
+        rightMotor2.setTargetPosition(rightTarget2);
+
+        leftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        strafeLeft();
+
+        boolean achieved = leftMotor.getCurrentPosition() == leftTarget1 && leftMotor2.getCurrentPosition() == leftTarget2
+                && rightMotor.getCurrentPosition() == rightTarget1 && rightMotor2.getCurrentPosition() == rightTarget2;
+        if(achieved) {
+            brake();
+            leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            leftMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            rightMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
     }
+
+    public void forward(int inches) {
+        int ticks = inches * (int) encoderTicksPerInch;
+
+        int leftTarget1 = leftMotor.getCurrentPosition() + ticks;
+        int leftTarget2 = leftMotor2.getCurrentPosition() + ticks;
+        int rightTarget1 = rightMotor.getCurrentPosition() + ticks;
+        int rightTarget2 = rightMotor2.getCurrentPosition() + ticks;
+
+        leftMotor.setTargetPosition(leftTarget1);
+        leftMotor2.setTargetPosition(leftTarget2);
+        rightMotor.setTargetPosition(rightTarget1);
+        rightMotor2.setTargetPosition(rightTarget2);
+
+        leftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        forward();
+
+        boolean achieved = leftMotor.getCurrentPosition() == leftTarget1 && leftMotor2.getCurrentPosition() == leftTarget2
+                && rightMotor.getCurrentPosition() == rightTarget1 && rightMotor2.getCurrentPosition() == rightTarget2;
+        if(achieved) {
+            brake();
+            leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            leftMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            rightMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
+    }
+
+    public void backward(int inches) {
+        int ticks = inches * (int) encoderTicksPerInch;
+
+        int leftTarget1 = leftMotor.getCurrentPosition() + ticks;
+        int leftTarget2 = leftMotor2.getCurrentPosition() + ticks;
+        int rightTarget1 = rightMotor.getCurrentPosition() + ticks;
+        int rightTarget2 = rightMotor2.getCurrentPosition() + ticks;
+
+        leftMotor.setTargetPosition(leftTarget1);
+        leftMotor2.setTargetPosition(leftTarget2);
+        rightMotor.setTargetPosition(rightTarget1);
+        rightMotor2.setTargetPosition(rightTarget2);
+
+        leftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        backward();
+
+        boolean achieved = leftMotor.getCurrentPosition() == leftTarget1 && leftMotor2.getCurrentPosition() == leftTarget2
+                && rightMotor.getCurrentPosition() == rightTarget1 && rightMotor2.getCurrentPosition() == rightTarget2;
+        if(achieved) {
+            brake();
+            leftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            leftMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            rightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            rightMotor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        }
+    */
+
+    public void strafeRight() {
+        leftMotor.setPower(-motorPower);
+        rightMotor.setPower(motorPower);
+        leftMotor2.setPower(motorPower);
+        rightMotor2.setPower(-motorPower);
+    }
+    
 
     public void strafeLeft() {
-        leftMotor.setPower(-0.5);
-        rightMotor.setPower(0.5);
-        leftMotor2.setPower(0.5);
-        rightMotor2.setPower(-0.5);
+        leftMotor.setPower(motorPower);
+        rightMotor.setPower(-motorPower);
+        leftMotor2.setPower(-motorPower);
+        rightMotor2.setPower(motorPower);
     }
 
     public void forward() {
-        leftMotor.setPower(-0.5);
-        rightMotor.setPower(-0.5);
-        leftMotor2.setPower(-0.5);
-        rightMotor2.setPower(-0.5);
+        leftMotor.setPower(-motorPower);
+        rightMotor.setPower(-motorPower);
+        leftMotor2.setPower(-motorPower);
+        rightMotor2.setPower(-motorPower);
     }
 
     public void backward() {
-        leftMotor.setPower(0.5);
-        rightMotor.setPower(0.5);
-        leftMotor2.setPower(0.5);
-        rightMotor2.setPower(0.5);
+        leftMotor.setPower(motorPower);
+        rightMotor.setPower(motorPower);
+        leftMotor2.setPower(motorPower);
+        rightMotor2.setPower(motorPower);
     }
 
     public void brake() {
@@ -168,7 +326,7 @@ public class AutonomousObject {
     }
 
     public void liftUp() {
-        liftPivotMotor.setPower(.5f);
+        liftPivotMotor.setPower(-.35);
     }
 
     public void liftDown() {
@@ -184,7 +342,7 @@ public class AutonomousObject {
     }
 
     public void extendForward() {
-        intakeExtensionServo.setPower(-.7);
+        intakeExtensionServo.setPower(1);
     }
 
     public void extendStop()

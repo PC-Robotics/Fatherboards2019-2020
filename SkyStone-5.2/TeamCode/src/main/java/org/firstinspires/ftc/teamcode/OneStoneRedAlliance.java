@@ -72,9 +72,9 @@ import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocaliz
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-@Autonomous(name = "OneStoneRedAlliancePERFECT")
+@Autonomous(name = "OneStoneRedAlliance")
 
-public class OneStoneRedAlliancePERFECT extends LinearOpMode {
+public class OneStoneRedAlliance extends LinearOpMode {
 
     AutonomousObject robot = new AutonomousObject();
     // IMPORTANT:  For Phone Camera, set 1) the camera source and 2) the orientation, based on how your phone is mounted:
@@ -147,7 +147,6 @@ public class OneStoneRedAlliancePERFECT extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-
         /*
          * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
          * We can pass Vuforia the handle to a camera preview resource (on the RC phone);
@@ -157,7 +156,7 @@ public class OneStoneRedAlliancePERFECT extends LinearOpMode {
         //Connects motors to hub & phone- use name in quotes for config
 
 //        liftPivotMotor.setPower(0.7f);... why is this line here?
-
+/*
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
 
@@ -199,10 +198,10 @@ public class OneStoneRedAlliancePERFECT extends LinearOpMode {
         rear1.setName("Rear Perimeter 1");
         VuforiaTrackable rear2 = targetsSkyStone.get(12);
         rear2.setName("Rear Perimeter 2");
-
+*/
         // For convenience, gather together all the trackable objects in one easily-iterable collection */
-        List<VuforiaTrackable> allTrackables = new ArrayList<VuforiaTrackable>();
-        allTrackables.addAll(targetsSkyStone);
+       // List<VuforiaTrackable> allTrackables = new ArrayList<VuforiaTrackable>();
+        //allTrackables.addAll(targetsSkyStone);
 
         /**
          * In order for localization to work, we need to tell the system where each target is on the field, and
@@ -225,7 +224,7 @@ public class OneStoneRedAlliancePERFECT extends LinearOpMode {
         // Set the position of the Stone Target.  Since it's not fixed in position, assume it's at the field origin.
         // Rotated it to to face forward, and raised it to sit on the ground correctly.
         // This can be used for generic target-centric approach algorithms
-        stoneTarget.setLocation(OpenGLMatrix
+       /* stoneTarget.setLocation(OpenGLMatrix
                 .translation(0, 0, stoneZ)
                 .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0, -90)));
 
@@ -303,24 +302,24 @@ public class OneStoneRedAlliancePERFECT extends LinearOpMode {
 
         // Rotate the phone vertical about the X axis if it's in portrait mode
         if (PHONE_IS_PORTRAIT) {
-            phoneXRotate = 0 ; //90 before
+            phoneXRotate = 90; //90 before
         }
 
         // Next, translate the camera lens to where it is on the robot.
         // In this example, it is centered (left to right), but forward of the middle of the robot, and above ground level.
-        final float CAMERA_FORWARD_DISPLACEMENT  = -4.0f * mmPerInch;   // eg: Camera is 4 Inches in front of robot center
-        final float CAMERA_VERTICAL_DISPLACEMENT = 8.0f * mmPerInch;   // eg: Camera is 8 Inches above ground
+
+        final float CAMERA_FORWARD_DISPLACEMENT  = 7f * mmPerInch;   // eg: Camera is 4 Inches in front of robot center
+        final float CAMERA_VERTICAL_DISPLACEMENT = 6.5f * mmPerInch;   // eg: Camera is 8 Inches above ground
         final float CAMERA_LEFT_DISPLACEMENT     = 0 * mmPerInch;     // eg: Camera is ON the robot's center line
-        //
 
         OpenGLMatrix robotFromCamera = OpenGLMatrix
                 .translation(CAMERA_FORWARD_DISPLACEMENT, CAMERA_LEFT_DISPLACEMENT, CAMERA_VERTICAL_DISPLACEMENT)
                 .multiplied(Orientation.getRotationMatrix(EXTRINSIC, YZX, DEGREES, phoneYRotate, phoneZRotate, phoneXRotate));
 
         /**  Let all the trackable listeners know where the phone is.  */
-        for (VuforiaTrackable trackable : allTrackables) {
-            ((VuforiaTrackableDefaultListener) trackable.getListener()).setPhoneInformation(robotFromCamera, parameters.cameraDirection);
-        }
+        //for (VuforiaTrackable trackable : allTrackables) {
+        //    ((VuforiaTrackableDefaultListener) trackable.getListener()).setPhoneInformation(robotFromCamera, parameters.cameraDirection);
+        //}
 
         // WARNING:
         // In this sample, we do not wait for PLAY to be pressed.  Target Tracking is started immediately when INIT is pressed.
@@ -329,38 +328,47 @@ public class OneStoneRedAlliancePERFECT extends LinearOpMode {
         // To restore the normal opmode structure, just un-comment the following line:
 
 
-        waitForStart();
-        while(opModeIsActive())
-        {
+      waitForStart();
+
+        while(opModeIsActive()) {
+
             robot.init(hardwareMap);
 
             robot.extendForward();
             robot.clawUp();
+            sleep(500);
+
             robot.forward();
-            sleep(1300);
+            sleep(800); //1300
 
             robot.brake();
             robot.extendStop();
             robot.clawDown();
-            sleep(1000);
+            sleep(1000); //1000
 
             robot.backward();
             robot.clawDown();
-            sleep(1000);
+            sleep(700); //1000
 
             robot.brake();
             robot.liftUp();
             sleep(1000);
 
             robot.strafeRight();
-            sleep(4000); //4000
+            sleep(3000); //4000
 
             robot.brake();
             sleep(1000);
 
+            robot.forward();
+            sleep(500); // wasn't h ere before
+
             robot.clawUp();
-            robot.backward();
             sleep(500);
+
+            robot.backward();
+            robot.clawUp();
+            sleep(750); //250
 
             robot.brake();
             robot.liftDown();
@@ -371,128 +379,66 @@ public class OneStoneRedAlliancePERFECT extends LinearOpMode {
             sleep(1500); //1600
 
             robot.brake();
-            sleep(25000);
+            sleep(30000);
 
-            //sleeps have to be here and they can't be in the method but it's fine... //first backwards a lil bit more.. same with brake...
-            /*robot.clawUp();
-            robot.forward();
-            sleep(1000);
 
-            robot.brake();
-            robot.clawDown();
-            sleep(1000); //fixed
+            // Note: To use the remote camera preview:
+            // AFTER you hit Init on the Driver Station, use the "options menu" to select "Camera Stream"
+            // Tap the preview window to receive a fresh image.
 
-            robot.backward();
-            robot.clawDown();
-            sleep(900);
-
-            robot.brake();
-            robot.liftUp();
-            robot.clawDown();
-            sleep(1200); //fixed
-
-            robot.strafeRight();
-            robot.liftUp();
-            sleep(2000);
-
-            //Right Side Of Field
-            robot.brake();
-            robot.liftDown();
-            robot.clawDown();
-            sleep(1000);
-
-            robot.clawUp();
-            sleep(500);
-
-            robot.backward();
-            sleep(200);
-
-            robot.brake();
-            sleep(500);
-
-            robot.strafeLeft();
-            sleep(2500); //play with this...
-
-            //comment out everything else and leave it on brake sleep for the remainder
-            //robot.brake();
-            //sleep(25000);
-            //block 2
-            robot.brake();
-            sleep(500);
-
-            robot.forward();
-            sleep( 800);
-
-            robot.brake();
-            robot.clawDown();
-            sleep(1000);
-
-            robot.backward();
-            robot.clawDown();
-            sleep(800);
-
-            robot.strafeRight();
-            sleep(5000);
-
-            robot.brake();
-            sleep(25000);*/
         }
+            /*targetsSkyStone.activate();
+            while (!isStopRequested() && !targetVisible) {
 
-        // Note: To use the remote camera preview:
-        // AFTER you hit Init on the Driver Station, use the "options menu" to select "Camera Stream"
-        // Tap the preview window to receive a fresh image.
+                // check all the trackable targets to see which one (if any) is visible.
+                targetVisible = false;
+                for (VuforiaTrackable trackable : allTrackables) {
+                    if (((VuforiaTrackableDefaultListener) trackable.getListener()).isVisible()) {
+                        telemetry.addData("Visible Target", trackable.getName());
+                        targetVisible = true;
 
-        /*
-        targetsSkyStone.activate();
-        while (!isStopRequested() && !targetVisible) {
-
-            // check all the trackable targets to see which one (if any) is visible.
-            targetVisible = false;
-            for (VuforiaTrackable trackable : allTrackables) {
-                if (((VuforiaTrackableDefaultListener)trackable.getListener()).isVisible()) {
-                    telemetry.addData("Visible Target", trackable.getName());
-                    targetVisible = true;
-
-                    // getUpdatedRobotLocation() will return null if no new information is available since
-                    // the last time that call was made, or if the trackable is not currently visible.
-                    OpenGLMatrix robotLocationTransform = ((VuforiaTrackableDefaultListener)trackable.getListener()).getUpdatedRobotLocation();
-                    if (robotLocationTransform != null) {
-                        lastLocation = robotLocationTransform;
+                        // getUpdatedRobotLocation() will return null if no new information is available since
+                        // the last time that call was made, or if the trackable is not currently visible.
+                        OpenGLMatrix robotLocationTransform = ((VuforiaTrackableDefaultListener) trackable.getListener()).getUpdatedRobotLocation();
+                        if (robotLocationTransform != null) {
+                            lastLocation = robotLocationTransform;
+                        }
+                        break;
                     }
-                    break;
                 }
+
+                // Provide feedback as to where the robot is located (if we know).
+                if (targetVisible) {
+                    // express position (translation) of robot in inches.
+                    VectorF translation = lastLocation.getTranslation();
+                    telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
+                            translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
+
+                    xVal = translation.get(1);
+
+                    // express the rotation of the robot in degrees.
+                    Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
+                    telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
+                } else {
+                    telemetry.addData("Visible Target", "none");
+                }
+                telemetry.update();
             }
 
-            // Provide feedback as to where the robot is located (if we know).
-            if (targetVisible) {
-                // express position (translation) of robot in inches.
-                VectorF translation = lastLocation.getTranslation();
-                telemetry.addData("Pos (in)", "{X, Y, Z} = %.1f, %.1f, %.1f",
-                        translation.get(0) / mmPerInch, translation.get(1) / mmPerInch, translation.get(2) / mmPerInch);
+            // Disable Tracking when we are done;
+            //targetsSkyStone.deactivate();
 
-                xVal = translation.get(1);
-
-                // express the rotation of the robot in degrees.
-                Orientation rotation = Orientation.getOrientation(lastLocation, EXTRINSIC, XYZ, DEGREES);
-                telemetry.addData("Rot (deg)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", rotation.firstAngle, rotation.secondAngle, rotation.thirdAngle);
+            if (xVal > 0) {
+                telemetry.addData("Location: ", "Right");
+            }
+            else if (xVal < 0) {
+                telemetry.addData("Location: ", "Left");
             }
             else {
-                telemetry.addData("Visible Target", "none");
+                telemetry.addData("Location: ", "Offscreen");
             }
+*/
             telemetry.update();
-        }
-
-        // Disable Tracking when we are done;
-        //targetsSkyStone.deactivate();
-
-        if(xVal > 0)
-            telemetry.addData("Location: ", "Right");
-        else if(xVal < 0)
-            telemetry.addData("Location: ", "Left");
-        else
-            telemetry.addData("Location: ", "Offscreen");
-        */
-        telemetry.update();
 
     }
 }

@@ -17,6 +17,53 @@ public class OneStoneBlueAlliance extends LinearOpMode {
 
             robot.extendForward();
             robot.clawUp();
+            sleep(500);
+
+            robot.forward();
+            sleep(800); //1300
+
+            robot.brake();
+            robot.extendStop();
+            robot.clawDown();
+            sleep(1000); //1000
+
+            robot.backward();
+            robot.clawDown();
+            sleep(700); //1000
+
+            robot.brake();
+            robot.liftUp();
+            sleep(1000);
+
+            robot.strafeLeft();
+            sleep(3000); //4000
+
+            robot.brake();
+            sleep(1000);
+
+            robot.clawUp();
+            sleep(500);
+
+            robot.backward();
+            robot.clawUp();
+            sleep(250);
+
+            robot.brake();
+            robot.liftDown();
+            robot.clawDown();
+            sleep(700);
+
+            robot.strafeRight();
+            sleep(1500); //1600
+
+            robot.brake();
+            sleep(25000);
+
+
+            /*robot.init(hardwareMap);
+
+            robot.extendForward();
+            robot.clawUp();
             robot.forward();
             sleep(1300);
 
@@ -52,7 +99,7 @@ public class OneStoneBlueAlliance extends LinearOpMode {
             sleep(2100); //1500
 
             robot.brake();
-            sleep(25000);
+            sleep(25000);*/
         }
     }
 }
