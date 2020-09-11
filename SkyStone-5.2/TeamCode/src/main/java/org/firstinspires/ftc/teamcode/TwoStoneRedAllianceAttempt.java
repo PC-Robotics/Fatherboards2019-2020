@@ -4,8 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @Autonomous(name = "TwoStoneRedAllianceAttempt")
-public class TwoStoneRedAllianceAttempt extends LinearOpMode {
-
+public class TwoStoneRedAllianceAttempt extends LinearOpMode { 
     AutonomousObject robot = new AutonomousObject();
 
     @Override
@@ -14,3 +13,8 @@ public class TwoStoneRedAllianceAttempt extends LinearOpMode {
         robot.init(hardwareMap);
     }
 }
+
+/*
+Change as of 9/11/2020
+Modified code in some way
+*/
