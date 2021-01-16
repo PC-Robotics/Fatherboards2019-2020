@@ -24,7 +24,7 @@ public class TankDrive extends LinearOpMode {
         robot.init(hardwareMap);
 
         // Send telemetry message to signify robot waiting;
-        telemetry.addData("Say", "Good Luck Nate and Ethan!");    //
+        telemetry.addData("Say", "Good Luck Elliot and Other people!");    //
         telemetry.update();
 
         // Wait for the game to start (driver presses PLAY)
@@ -83,13 +83,13 @@ public class TankDrive extends LinearOpMode {
             else if (gamepad2.b)
                 motorCoefficient = 1.0;
 
-            if (gamepad2.left_bumper)
-                robot.input.setPower(-1);
+//            if (gamepad2.left_bumper)
+//                robot.input.setPower(-1);
 
 
-            robot.input.setPower(gamepad2.right_trigger);
-            robot.output.setPower(gamepad2.left_trigger * motorCoefficient);
-            robot.output2.setPower(gamepad2.left_trigger * motorCoefficient);
+//            robot.input.setPower(gamepad2.right_trigger);
+//            robot.output.setPower(gamepad2.left_trigger * motorCoefficient);
+//            robot.output2.setPower(gamepad2.left_trigger * motorCoefficient);
             //reverse motor direction
             //Three things in autonomous
             //1 Grabbing the wobble goal -> blue target zone (15 points)
@@ -102,14 +102,14 @@ public class TankDrive extends LinearOpMode {
 
 
             //Input Direction Toggle
-            if (gamepad2.right_bumper && inputDirectionToggle){
-                robot.input.setDirection(DcMotorSimple.Direction.FORWARD);
-                inputDirectionToggle = false;
-            }
-            else if (gamepad2.right_bumper && !inputDirectionToggle){
-                robot.input.setDirection(DcMotor.Direction.REVERSE);
-                inputDirectionToggle = true;
-            }
+//            if (gamepad2.right_bumper && inputDirectionToggle){
+//                robot.input.setDirection(DcMotorSimple.Direction.FORWARD);
+//                inputDirectionToggle = false;
+//            }
+//            else if (gamepad2.right_bumper && !inputDirectionToggle){
+//                robot.input.setDirection(DcMotor.Direction.REVERSE);
+//                inputDirectionToggle = true;
+//            }
             
             //Shooter Power Toggle
             /*
