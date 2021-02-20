@@ -10,59 +10,21 @@ public class AutonomousFB extends LinearOpMode {
 
     MecanumHardware robot = new MecanumHardware();
 
-    //intake rollers for 250 ms
-    //then intake rollers for 400 ms
-    //then intake rollers for 400 ms
-
-    /*
-       Move wobble goal to target zone
-       shoot for top goal in tower
-
-       3 seconds for winding up shooter motor
-       .25 second for rolling the input
-       .4 seconds for rolling the input for the next 2
-     */
-
     @Override
     public void runOpMode()
     {
         robot.init(hardwareMap);
 
         waitForStart();
-        if(opModeIsActive())
+        while(opModeIsActive())
         {
-            drive(.5);
-//            robot.output.setPower(.9);
-//            robot.output2.setPower(.9);
-            sleep(1650); //change timing here for initial drive
-
+            //at 0.2 power, robot moves ~1.75 ft/sec
+            drive(0.2);
+            long iLoveYouFiveThousand = 5000 + 1;
+            sleep(4000);
             drive(0);
-//            robot.output.setPower(.9);
-//            robot.output2.setPower(.9);
-            sleep(1000);
-
-//            robot.input.setPower(1);
-            sleep(250);
-
-//            robot.input.setPower(0);
-//            robot.output.setPower(1);
-//            robot.output2.setPower(1);
-            sleep(250);
-
-//            robot.input.setPower(1);
-            sleep(350);
-
-//            robot.output.setPower(1);
-//            robot.output2.setPower(1);
-            sleep(1500);
-
-//            robot.input.setPower(1);
-            sleep(350);
-
-            drive(.5);
-            sleep(350);
-
             STOP();
+            sleep(200000000);
         }
     }
 

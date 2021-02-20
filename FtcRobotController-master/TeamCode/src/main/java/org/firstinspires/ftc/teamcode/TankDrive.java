@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-@TeleOp(name="TwoPlayerDrive")
+@TeleOp(name="TankDriveFatherboards")
 public class TankDrive extends LinearOpMode {
 
     MecanumHardware robot = new MecanumHardware();   // Use a Pushbot's hardware
@@ -30,6 +30,7 @@ public class TankDrive extends LinearOpMode {
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
+        robot.intake.setPower(1.0);
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
             //Driving
@@ -55,33 +56,72 @@ public class TankDrive extends LinearOpMode {
                 robot.leftBack.setPower(bld);
                 robot.rightBack.setPower(brd);
 
+            //Strafing
+            if ( (gamepad1.left_trigger > 0) && (!(gamepad1.right_trigger > 0)) ) {
+                robot.leftFront.setPower(gamepad1.left_trigger );
+                robot.rightFront.setPower(gamepad1.left_trigger);
+                robot.leftBack.setPower(gamepad1.left_trigger * -1);
+                robot.rightBack.setPower(gamepad1.left_trigger * -1);
+            }
+            else if ( (gamepad1.right_trigger > 0) && (!(gamepad1.left_trigger > 0)) ) {
+                robot.leftFront.setPower(gamepad1.right_trigger * -1);
+                robot.rightFront.setPower(gamepad1.right_trigger * -1);
+                robot.leftBack.setPower(gamepad1.right_trigger);
+                robot.rightBack.setPower(gamepad1.right_trigger);
+            }
+
                 telemetry.addData("leftFront", "%.2f", fld);
                 telemetry.addData("rightFront", "%.2f", frd);
                 telemetry.addData("leftBack", "%.2f", bld);
                 telemetry.addData("rightBack", "%.2f", brd);
-
-
-            //Driving Direction Toggle
-            if(gamepad1.a && directionToggle){
-                robot.leftFront.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
-                robot.rightFront.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
-                robot.leftBack.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
-                robot.rightBack.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
-                directionToggle = false;
-            }
-            else if(gamepad1.a && !directionToggle){
-                robot.leftFront.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
-                robot.rightFront.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
-                robot.leftBack.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
-                robot.rightBack.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
-                directionToggle = true;
-            }
-
-            //Motor Coefficients
+                
+            //Reverse intake direction (Player 2)
             if (gamepad2.a)
+                robot.intake.setPower(robot.intake.getPower() * -1);
+            //Motor Coefficients
+            if (gamepad1.x)
                 motorCoefficient = 0.85;
-            else if (gamepad2.b)
+            else if (gamepad1.y)
                 motorCoefficient = 1.0;
+            if ( (gamepad2.right_trigger > 0) && (!(gamepad2.left_trigger > 0)) ) {
+                robot.fly1.setPower(1.0);
+                robot.fly2.setPower(1.0);
+            } else if ( (gamepad2.left_trigger > 0) && (!(gamepad2.right_trigger > 0)) ) {
+                robot.fly1.setPower(-1.0);
+                robot.fly2.setPower(-1.0);
+            } else {
+                robot.fly1.setPower(0);
+                robot.fly2.setPower(0);
+            }
+
+
+
+
+
+//            //Driving Direction Toggle
+//            if(gamepad1.a && directionToggle){
+//                robot.leftFront.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
+//                robot.rightFront.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
+//                robot.leftBack.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
+//                robot.rightBack.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
+//                directionToggle = false;
+//            }
+//            else if(gamepad1.a && !directionToggle){
+//                robot.leftFront.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
+//                robot.rightFront.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
+//                robot.leftBack.setDirection(DcMotor.Direction.FORWARD); // Set to REVERSE if using AndyMark motors
+//                robot.rightBack.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
+//                directionToggle = true;
+//            }
+
+
+            }
+
+//            //Motor Coefficients
+//            if (gamepad2.a)
+//                motorCoefficient = 0.85;
+//            else if (gamepad2.b)
+//                motorCoefficient = 1.0;
 
 //            if (gamepad2.left_bumper)
 //                robot.input.setPower(-1);
@@ -127,6 +167,8 @@ public class TankDrive extends LinearOpMode {
             telemetry.addData("Shooting Motor Direction (shouldn't need to use): ", motorToggle);
             telemetry.addData("Shooter Motor Power: ", motorCoefficient);
             telemetry.update();
+            telemetry.addData("pls work","pls?");
+            telemetry.update();
         }
     }
-}
+//}

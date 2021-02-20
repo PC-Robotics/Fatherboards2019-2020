@@ -15,9 +15,9 @@ public class MecanumHardware {
     public DcMotor  rightFront  = null; //C1
     public DcMotor leftBack   = null; //C2
     public DcMotor  rightBack  = null; //C3
-//    public DcMotor input = null; //E0
-//    public DcMotor output = null; //E1
-//    public DcMotor output2 = null;
+    public DcMotor intake = null;
+    public DcMotor fly1 = null;
+    public DcMotor fly2 = null;
 
     /* local OpMode members. */
     HardwareMap hwMap           =  null;
@@ -39,9 +39,9 @@ public class MecanumHardware {
         rightFront = hwMap.get(DcMotor.class, "rightFront");
         leftBack  = hwMap.get(DcMotor.class, "leftBack");
         rightBack = hwMap.get(DcMotor.class, "rightBack");
-//        input = hwMap.get(DcMotor.class, "input");
-//        output = hwMap.get(DcMotor.class, "output");
-//        output2 = hwMap.get(DcMotor.class, "output2");
+        intake = hwMap.get(DcMotor.class, "intake");
+        fly1 = hwMap.get(DcMotor.class, "fly1");
+        fly2 = hwMap.get(DcMotor.class, "fly2");
         //grabber = hwMap.get(Servo.class, "grabber");
         //lift = hwMap.get(DcMotor.class, "lift");
         //webcamName = hwMap.get(WebcamName.class, "Webcam 1");
@@ -52,6 +52,9 @@ public class MecanumHardware {
         rightFront.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
         leftBack.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
         rightBack.setDirection(DcMotor.Direction.FORWARD);// Set to FORWARD if using AndyMark motors
+        intake.setDirection(DcMotor.Direction.FORWARD);
+        fly1.setDirection(DcMotor.Direction.FORWARD);
+        fly2.setDirection(DcMotor.Direction.FORWARD);
 //        input.setDirection(DcMotor.Direction.REVERSE);
 //        output.setDirection(DcMotorSimple.Direction.REVERSE);
 //        output2.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -60,6 +63,9 @@ public class MecanumHardware {
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        fly1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        fly2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 //        input.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 //        output.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 //        output2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -74,6 +80,9 @@ public class MecanumHardware {
         rightFront.setPower(0);
         leftBack.setPower(0);
         rightBack.setPower(0);
+        intake.setPower(0);
+        fly1.setPower(0);
+        fly2.setPower(0);
         //lift.setPower(0);
 
         //grabber.setPosition(MID_SERVO);
@@ -82,6 +91,9 @@ public class MecanumHardware {
         rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         leftBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightBack.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        fly1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        fly2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 //        input.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 //        output.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         // Set all motors to run without encoders.
