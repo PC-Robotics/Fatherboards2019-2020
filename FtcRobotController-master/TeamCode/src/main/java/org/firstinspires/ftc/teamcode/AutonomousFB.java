@@ -19,8 +19,11 @@ public class AutonomousFB extends LinearOpMode {
         while(opModeIsActive())
         {
             //at 0.2 power, robot moves ~1.75 ft/sec
+            //Shaurnav: tell Elliot to invest in something call encoders. Thay way you can do the math in the code and then say
+            //move forward x number of inches.
+
             drive(0.2);
-            long iLoveYouFiveThousand = 5000 + 1;
+            long iLoveYouFiveThousand = 5000 + 1; //Shaurnav: this is hilarious
             sleep(4000);
             drive(0);
             STOP();
